@@ -1,0 +1,22 @@
+.header-button {
+	margin: 20px;
+	width: 175px;
+	height: 55px;
+	border-radius: 28px;
+	font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+	font-weight: bolder;
+	font-size: 30px;
+}
+
+.home-panel {
+	width: 560px;
+}
+
+#home-new-trip-button {
+	width: 175px;
+	height: 55px;
+	border-radius: 28px;
+	font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+	font-weight: bolder;
+	font-size: 30px;
+}
