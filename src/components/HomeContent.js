@@ -27,7 +27,7 @@ export default function HomeContent(props) {
 								fontFamily: "Segoe Print",
 							}}
 						>
-							Plan your trip with just a few click
+							Plan your trip with just a few clicks
 						</Content>
 						<Content style={{ marginTop: "50px" }}>
 							<Link to="/new_plan">
