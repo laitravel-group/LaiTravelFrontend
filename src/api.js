@@ -149,7 +149,7 @@ export const buildUpdateTripPlan = async (updatedPlan) => {
 	return await res.json();
 };
 
-export const saveTripPlan = async () => {
+export const saveTripPlan = async (data) => {
 	const url = `${domain}/trip-plans-save`;
 	const authToken = localStorage.getItem("authToken");
 	const res = await fetch(url, {
@@ -158,7 +158,7 @@ export const saveTripPlan = async () => {
 			"Content-Type": "application/json",
 			Authorization: `Bearer ${authToken}`,
 		},
-		body: JSON.stringify(credentials),
+		body: JSON.stringify(data),
 	});
 	handleResponseStatus(res, `Failed to save the trip plan: ${res.text}`);
 	return await res.json();
