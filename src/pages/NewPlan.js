@@ -27,20 +27,20 @@ export default function NewPlan() {
 	}, [cityLocation]);
 	return (
 		<Layout style={{ height: "100vh" }}>
-			{subPage == "search" && (
+			{subPage === "search" && (
 				<>
 					<PageHeader />
 					<Content>
 						<NewPlanSearchBar
 							setCityLocation={setCityLocation}
-							date={dates}
+							dates={dates}
 							setDates={setDates}
 						/>
 					</Content>
 				</>
 			)}
 
-			{subPage == "plan" && (
+			{subPage === "plan" && (
 				<SimpleMap initCity={cityLocation} dates={dates} />
 			)}
 		</Layout>
