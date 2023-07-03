@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { Button, DatePicker, Input, notification, Space } from "antd";
+import { Button, DatePicker, Input, Layout, message } from "antd";
 import { apiKey } from "../key";
 import GoogleMap from "google-maps-react-markers";
+import { Content } from "antd/es/layout/layout";
 
 const { RangePicker } = DatePicker;
 
@@ -19,16 +20,15 @@ const InitCity = (props) => {
 		zoom: 99,
 	};
 
-	const apiHasLoaded = (map, maps) => {
+	const apiHasLoaded = (map, mapApi) => {
 		setMapInstance(map);
-		setMapApi(maps);
+		setMapApi(mapApi);
 		setMapApiLoaded(true);
 	};
 
 	const findCity = () => {
 		if (props.date == null) {
-			console.log("no date input");
-			openNotification();
+			message.error("Please select your start and end dates");
 			return;
 		}
 		if (mapApiLoaded) {
@@ -60,66 +60,73 @@ const InitCity = (props) => {
 					status === mapApi.places.PlacesServiceStatus.OK &&
 					results
 				) {
-					props.setStartCity({
+					props.setCityLocation({
 						lat: results[0].geometry.location.lat(),
 						lng: results[0].geometry.location.lng(),
 					});
-					console.log(results);
-					return;
+				} else {
+					message.error("Please enter a valid city name");
 				}
-				console.log("search error");
-				openNotification();
 			});
+		} else {
+			message.error(
+				"Error! Failed to load Google Map API, please try again later"
+			);
 		}
-	};
-	const openNotification = () => {
-		notification.open({
-			message: "Error!",
-			description: "Please enter a valid City name and/or Date range!",
-		});
 	};
 
 	return (
-		// Important! Always set the container height explicitly
-		<div>
-			<div
-				style={{
-					position: "fixed",
-					top: "50%",
-					left: "35%",
-					height: "100%",
-					width: "100%",
-				}}
+		<Layout style={{ textAlign: "center" }}>
+			<Content
+				style={{ fontSize: "40px", fontWeight: "bolder" }}
+				className="new-plan-search-content"
 			>
-				<Space direction="vertical" size={12}>
-					<RangePicker
-						value={props.date}
-						onChange={(e) => props.setDate(e)}
-					/>
-				</Space>
-				<Input
-					style={{ width: "15vw" }}
-					placeholder="Search city"
-					value={start}
-					onChange={(e) => setStart(e.target.value)}
-					onPressEnter={() => findCity()}
-				/>
-				<Button type="primary" onClick={findCity}>
-					Search
-				</Button>
-				<ul>
+				Select your destination and dates
+			</Content>
+			<Content className="new-plan-search-content">
+				<div style={{ display: "flex", justifyContent: "center" }}>
+					<table>
+						<tr style={{ textAlign: "left" }}>
+							<td>Dates</td>
+							<td>Destination</td>
+						</tr>
+						<tr>
+							<td>
+								<RangePicker
+									value={props.date}
+									onChange={(e) => props.setDate(e)}
+								/>
+							</td>
+							<td>
+								<Input
+									style={{ width: "15vw" }}
+									placeholder="Search city"
+									value={start}
+									onChange={(e) => setStart(e.target.value)}
+									onPressEnter={() => findCity()}
+								/>
+							</td>
+							<td>
+								<Button type="primary" onClick={findCity}>
+									Search
+								</Button>
+							</td>
+						</tr>
+					</table>
+				</div>
+				<div style={{ display: "none" }}>
 					<GoogleMap
 						apiKey={apiKey}
 						defaultCenter={defaultProps.center}
 						defaultZoom={defaultProps.zoom}
 						yesIWantToUseGoogleMapApiInternals
-						onGoogleApiLoaded={({ map, maps }) =>
-							apiHasLoaded(map, maps)
+						onGoogleApiLoaded={({ map, mapApi }) =>
+							apiHasLoaded(map, mapApi)
 						}
 					></GoogleMap>
-				</ul>
-			</div>
-		</div>
+				</div>
+			</Content>
+		</Layout>
 	);
 };
 

@@ -1,9 +1,15 @@
 import { Row, Col, Image, Button, Layout } from "antd";
 import { Content } from "antd/es/layout/layout";
 import React from "react";
+import { useNavigate } from "react-router";
 import { Link } from "react-router-dom";
 
 export default function HomeContent(props) {
+	const navigate = useNavigate();
+	const handleNewPlanLinkClick = () => {
+		navigate("/new_plan", { state: { subPage: "search" } });
+	};
+
 	return (
 		<Content style={{ marginTop: "30px" }}>
 			<Row justify="space-evenly">
@@ -30,14 +36,13 @@ export default function HomeContent(props) {
 							Plan your trip with just a few clicks
 						</Content>
 						<Content style={{ marginTop: "50px" }}>
-							<Link to="/new_plan">
-								<Button
-									type="primary"
-									id="home-new-trip-button"
-								>
-									Start Now
-								</Button>
-							</Link>
+							<Button
+								type="primary"
+								id="home-new-trip-button"
+								onClick={handleNewPlanLinkClick}
+							>
+								Start Now
+							</Button>
 						</Content>
 					</Layout>
 				</Col>

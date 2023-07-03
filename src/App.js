@@ -60,7 +60,7 @@ export default function App() {
 					colorPrimaryBg: "#fffffa",
 					colorBgLayout: "#fffffa",
 					colorBgContainer: "#fefefe",
-					fontFamily: "arial-black",
+					fontFamily: "Segoe UI, Tahoma, Geneva, Verdana, sans-serif",
 				},
 			}}
 		>

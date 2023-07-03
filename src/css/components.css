@@ -3,7 +3,6 @@
 	width: 175px;
 	height: 55px;
 	border-radius: 28px;
-	font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 	font-weight: bolder;
 	font-size: 30px;
 }
@@ -16,7 +15,10 @@
 	width: 175px;
 	height: 55px;
 	border-radius: 28px;
-	font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 	font-weight: bolder;
 	font-size: 30px;
+}
+
+.new-plan-search-content {
+	margin: 25px;
 }
