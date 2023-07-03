@@ -11,10 +11,12 @@ const { RangePicker } = DatePicker;
 const InitCity = (props) => {
 	const { dates, setDates, setCityLocation } = props;
 
-	const [mapApiLoaded, setMapApiLoaded] = useState(false);
 	const [mapInstance, setMapInstance] = useState(null);
 	const [mapApi, setMapApi] = useState(null);
+	const [mapApiLoaded, setMapApiLoaded] = useState(false);
 	const [start, setStart] = useState("");
+
+	const [messageApi, contextHolder] = message.useMessage();
 
 	const defaultProps = {
 		center: {
@@ -24,8 +26,8 @@ const InitCity = (props) => {
 		zoom: 99,
 	};
 
-	const apiHasLoaded = (map, mapApi) => {
-		setMapInstance(map);
+	const apiHasLoaded = (mapInstance, mapApi) => {
+		setMapInstance(mapInstance);
 		setMapApi(mapApi);
 		setMapApiLoaded(true);
 	};
@@ -36,8 +38,8 @@ const InitCity = (props) => {
 	};
 
 	const findCity = () => {
-		if (dates == null) {
-			message.error("Please select your start and end dates");
+		if (dates === null) {
+			messageApi.error("Please select your start and end dates");
 			return;
 		}
 		if (mapApiLoaded) {
@@ -74,77 +76,87 @@ const InitCity = (props) => {
 						lng: results[0].geometry.location.lng(),
 					});
 				} else {
-					message.error("Please enter a valid city name");
+					messageApi.error("Please enter a valid city name");
 				}
 			});
 		} else {
-			message.error(
+			messageApi.error(
 				"Error! Failed to load Google Map API, please try again later"
 			);
 		}
 	};
 
 	return (
-		<Layout style={{ textAlign: "center" }}>
-			<Content
-				style={{ fontSize: "40px", fontWeight: "bolder" }}
-				className="new-plan-search-content"
-			>
-				Select your destination and dates
-			</Content>
-			<Content className="new-plan-search-content">
-				<div style={{ display: "flex", justifyContent: "center" }}>
-					<table>
-						<thead>
-							<tr style={{ textAlign: "left" }}>
-								<td>Dates</td>
-								<td>Destination</td>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<td>
-									<RangePicker
-										format={getFormatString()}
-										disabledDate={disabledDate}
-										value={dates}
-										onChange={(dates) => setDates(dates)}
-										placement="bottomLeft"
-									/>
-								</td>
-								<td>
-									<Input
-										style={{ width: "15vw" }}
-										placeholder="Search city"
-										value={start}
-										onChange={(e) =>
-											setStart(e.target.value)
-										}
-										onPressEnter={() => findCity()}
-									/>
-								</td>
-								<td>
-									<Button type="primary" onClick={findCity}>
-										Search
-									</Button>
-								</td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
-				<div style={{ display: "none" }}>
-					<GoogleMap
-						apiKey={apiKey}
-						defaultCenter={defaultProps.center}
-						defaultZoom={defaultProps.zoom}
-						yesIWantToUseGoogleMapApiInternals
-						onGoogleApiLoaded={({ map, mapApi }) =>
-							apiHasLoaded(map, mapApi)
-						}
-					></GoogleMap>
-				</div>
-			</Content>
-		</Layout>
+		<>
+			{contextHolder}
+			<Layout style={{ textAlign: "center" }}>
+				<Content
+					style={{ fontSize: "40px", fontWeight: "bolder" }}
+					className="new-plan-search-content"
+				>
+					Select your destination and dates
+				</Content>
+				<Content className="new-plan-search-content">
+					<div style={{ display: "flex", justifyContent: "center" }}>
+						<table>
+							<thead>
+								<tr style={{ textAlign: "left" }}>
+									<td>Dates</td>
+									<td>Destination</td>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td>
+										<RangePicker
+											format={getFormatString()}
+											disabledDate={disabledDate}
+											value={dates}
+											onChange={(dates) => {
+												console.log(dates);
+												setDates(dates);
+											}}
+											placement="bottomLeft"
+										/>
+									</td>
+									<td>
+										<Input
+											style={{ width: "15vw" }}
+											placeholder="Search city"
+											value={start}
+											onChange={(e) =>
+												setStart(e.target.value)
+											}
+											onPressEnter={() => findCity()}
+										/>
+									</td>
+									<td>
+										<Button
+											type="primary"
+											onClick={findCity}
+										>
+											Search
+										</Button>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<div style={{ display: "none" }}>
+						{/* DO NOT CHANGE THE FUNCTION PARAMS IN THE STATE OF "onGoogleApiLoaded", IT HAS TO BE CALLED "map" AND "maps"! */}
+						<GoogleMap
+							apiKey={apiKey}
+							defaultCenter={defaultProps.center}
+							defaultZoom={defaultProps.zoom}
+							yesIWantToUseGoogleMapApiInternals
+							onGoogleApiLoaded={({ map, maps }) =>
+								apiHasLoaded(map, maps)
+							}
+						></GoogleMap>
+					</div>
+				</Content>
+			</Layout>
+		</>
 	);
 };
 

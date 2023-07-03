@@ -8,6 +8,8 @@ export default function LoginSignupButton({ onLoginSuccess }) {
 	const [loading, setLoading] = useState(false);
 	const [type, setType] = useState("");
 
+	const [messageApi, contextHolder] = message.useMessage();
+
 	// open up modal
 	const handleLoginOnClick = () => {
 		setType("Login");
@@ -30,7 +32,7 @@ export default function LoginSignupButton({ onLoginSuccess }) {
 			await login(data);
 			onLoginSuccess();
 		} catch (error) {
-			message.error(error.message);
+			messageApi.error(error.message);
 		} finally {
 			setLoading(false);
 		}
@@ -41,10 +43,10 @@ export default function LoginSignupButton({ onLoginSuccess }) {
 		setLoading(true);
 		try {
 			await signup(data);
-			message.success("Sign up successfully");
+			messageApi.success("Sign up successfully");
 			setModalOpen(false);
 		} catch (error) {
-			message.error(error.message);
+			messageApi.error(error.message);
 		} finally {
 			setLoading(false);
 		}
@@ -52,6 +54,7 @@ export default function LoginSignupButton({ onLoginSuccess }) {
 
 	return (
 		<>
+			{contextHolder}
 			<Button
 				type="primary"
 				className="header-button"
