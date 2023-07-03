@@ -1,12 +1,16 @@
 import React, { useState } from "react";
 import { Button, DatePicker, Input, Layout, message } from "antd";
-import { apiKey } from "../key";
-import GoogleMap from "google-maps-react-markers";
 import { Content } from "antd/es/layout/layout";
+import GoogleMap from "google-maps-react-markers";
+import dayjs from "dayjs";
+import { getFormatString } from "../utils";
+import { apiKey } from "../key";
 
 const { RangePicker } = DatePicker;
 
 const InitCity = (props) => {
+	const { dates, setDates, setCityLocation } = props;
+
 	const [mapApiLoaded, setMapApiLoaded] = useState(false);
 	const [mapInstance, setMapInstance] = useState(null);
 	const [mapApi, setMapApi] = useState(null);
@@ -26,8 +30,13 @@ const InitCity = (props) => {
 		setMapApiLoaded(true);
 	};
 
+	const disabledDate = (current) => {
+		// Can not select days before today and today
+		return current && current < dayjs().endOf("day");
+	};
+
 	const findCity = () => {
-		if (props.date == null) {
+		if (dates == null) {
 			message.error("Please select your start and end dates");
 			return;
 		}
@@ -60,7 +69,7 @@ const InitCity = (props) => {
 					status === mapApi.places.PlacesServiceStatus.OK &&
 					results
 				) {
-					props.setCityLocation({
+					setCityLocation({
 						lat: results[0].geometry.location.lat(),
 						lng: results[0].geometry.location.lng(),
 					});
@@ -86,32 +95,41 @@ const InitCity = (props) => {
 			<Content className="new-plan-search-content">
 				<div style={{ display: "flex", justifyContent: "center" }}>
 					<table>
-						<tr style={{ textAlign: "left" }}>
-							<td>Dates</td>
-							<td>Destination</td>
-						</tr>
-						<tr>
-							<td>
-								<RangePicker
-									value={props.date}
-									onChange={(e) => props.setDate(e)}
-								/>
-							</td>
-							<td>
-								<Input
-									style={{ width: "15vw" }}
-									placeholder="Search city"
-									value={start}
-									onChange={(e) => setStart(e.target.value)}
-									onPressEnter={() => findCity()}
-								/>
-							</td>
-							<td>
-								<Button type="primary" onClick={findCity}>
-									Search
-								</Button>
-							</td>
-						</tr>
+						<thead>
+							<tr style={{ textAlign: "left" }}>
+								<td>Dates</td>
+								<td>Destination</td>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>
+									<RangePicker
+										format={getFormatString()}
+										disabledDate={disabledDate}
+										value={dates}
+										onChange={(dates) => setDates(dates)}
+										placement="bottomLeft"
+									/>
+								</td>
+								<td>
+									<Input
+										style={{ width: "15vw" }}
+										placeholder="Search city"
+										value={start}
+										onChange={(e) =>
+											setStart(e.target.value)
+										}
+										onPressEnter={() => findCity()}
+									/>
+								</td>
+								<td>
+									<Button type="primary" onClick={findCity}>
+										Search
+									</Button>
+								</td>
+							</tr>
+						</tbody>
 					</table>
 				</div>
 				<div style={{ display: "none" }}>

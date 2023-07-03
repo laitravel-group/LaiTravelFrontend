@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Layout, Tabs } from "antd";
+import { Layout } from "antd";
 import PageHeader from "../components/PageHeader";
 import SimpleMap from "../components/CreatePlanContent";
 import NewPlanSearchBar from "../components/NewPlanSearchBar";
@@ -16,7 +16,7 @@ export default function NewPlan() {
 		lat: 0,
 		lng: 0,
 	});
-	const [date, setDate] = useState(null);
+	const [dates, setDates] = useState(null);
 
 	useEffect(() => {
 		if (cityLocation.lat !== 0 && cityLocation.lng !== 0) {
@@ -33,15 +33,15 @@ export default function NewPlan() {
 					<Content>
 						<NewPlanSearchBar
 							setCityLocation={setCityLocation}
-							date={date}
-							setDate={setDate}
+							date={dates}
+							setDates={setDates}
 						/>
 					</Content>
 				</>
 			)}
 
 			{subPage == "plan" && (
-				<SimpleMap initCity={cityLocation} date={date} />
+				<SimpleMap initCity={cityLocation} dates={dates} />
 			)}
 		</Layout>
 	);
