@@ -1,8 +1,7 @@
+import React from "react";
 import { Row, Col, Image, Button, Layout } from "antd";
 import { Content } from "antd/es/layout/layout";
-import React from "react";
 import { useNavigate } from "react-router";
-import { Link } from "react-router-dom";
 
 export default function HomeContent(props) {
 	const navigate = useNavigate();

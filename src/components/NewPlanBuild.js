@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from "react";
-import PageHeader from "../components/PageHeader";
-import { cloneDeep } from "lodash";
 import {
 	AutoComplete,
 	Badge,
@@ -12,10 +10,7 @@ import {
 	Space,
 	Table,
 	TimePicker,
-	Typography,
 } from "antd";
-import { apiKey } from "../key";
-import GoogleMap from "google-maps-react-markers";
 import {
 	CalendarOutlined,
 	DeleteOutlined,
@@ -26,6 +21,10 @@ import {
 	ScheduleOutlined,
 	SearchOutlined,
 } from "@ant-design/icons";
+import GoogleMap from "google-maps-react-markers";
+import { cloneDeep } from "lodash";
+import PageHeader from "./PageHeader";
+import { apiKey } from "../key";
 
 const { Content, Footer, Sider } = Layout;
 const colors = [
@@ -46,7 +45,7 @@ const colors = [
 
 const AnyReactComponent = ({ text }) => <div>{text}</div>;
 
-const SimpleMap = (props) => {
+export default function NewPlanBuild(props) {
 	const [myPosition, setMyPosition] = useState({
 		lat: props.initCity.lat,
 		lng: props.initCity.lng,
@@ -60,7 +59,7 @@ const SimpleMap = (props) => {
 	const [autoList, setAutoList] = useState([]);
 	const [markers, setMarkers] = useState([]);
 	let infowindow;
-	const days = props.date[1].diff(props.date[0], "day") + 1;
+	const days = props.dates[1].diff(props.dates[0], "day") + 1;
 	const [plansData, setPlansData] = useState(createPlans(days));
 
 	function log() {
@@ -78,14 +77,14 @@ const SimpleMap = (props) => {
 		{
 			key: "0",
 			place: "First Place Name",
-			time: props.date[0].hour(11).minute(30),
-			duration: props.date[0].hour(3).minute(0),
+			time: props.dates[0].hour(11).minute(30),
+			duration: props.dates[0].hour(3).minute(0),
 		},
 		{
 			key: "1",
 			place: "Second Place Name",
-			time: props.date[0].hour(23).minute(30),
-			duration: props.date[0].hour(3).minute(0),
+			time: props.dates[0].hour(23).minute(30),
+			duration: props.dates[0].hour(3).minute(0),
 		},
 	];
 
@@ -96,7 +95,7 @@ const SimpleMap = (props) => {
 			label: (
 				<span>
 					<CalendarOutlined />{" "}
-					{[props.date[0].add(i, "day").format("MMM Do")]}
+					{[props.dates[0].add(i, "day").format("MMM Do")]}
 				</span>
 			),
 		});
@@ -340,7 +339,7 @@ const SimpleMap = (props) => {
 			date: (
 				<span>
 					<CalendarOutlined />{" "}
-					{[props.date[0].add(i, "day").format("dddd, MMM Do")]}
+					{[props.dates[0].add(i, "day").format("dddd, MMM Do")]}
 				</span>
 			),
 		});
@@ -368,10 +367,10 @@ const SimpleMap = (props) => {
 										const newPlans = cloneDeep(plansData);
 										const moving =
 											placesData[row.key][record.key];
-										moving.time = props.date[0]
+										moving.time = props.dates[0]
 											.hour(8)
 											.minute(0);
-										moving.duration = props.date[0]
+										moving.duration = props.dates[0]
 											.hour(3)
 											.minute(0);
 										moving.marker = cloneDeep(
@@ -820,6 +819,4 @@ const SimpleMap = (props) => {
 			</Layout>
 		</div>
 	);
-};
-
-export default SimpleMap;
+}

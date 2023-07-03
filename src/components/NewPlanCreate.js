@@ -8,7 +8,7 @@ import { apiKey } from "../key";
 
 const { RangePicker } = DatePicker;
 
-const InitCity = (props) => {
+export default function NewPlanCreate(props) {
 	const { dates, setDates, setCityLocation } = props;
 
 	const [mapInstance, setMapInstance] = useState(null);
@@ -17,14 +17,6 @@ const InitCity = (props) => {
 	const [start, setStart] = useState("");
 
 	const [messageApi, contextHolder] = message.useMessage();
-
-	const defaultProps = {
-		center: {
-			lat: 37.422131,
-			lng: -122.084801,
-		},
-		zoom: 99,
-	};
 
 	const apiHasLoaded = (mapInstance, mapApi) => {
 		setMapInstance(mapInstance);
@@ -146,8 +138,8 @@ const InitCity = (props) => {
 						{/* DO NOT CHANGE THE FUNCTION PARAMS IN THE STATE OF "onGoogleApiLoaded", IT HAS TO BE CALLED "map" AND "maps"! */}
 						<GoogleMap
 							apiKey={apiKey}
-							defaultCenter={defaultProps.center}
-							defaultZoom={defaultProps.zoom}
+							defaultCenter={{ lat: 0, lng: 0 }}
+							defaultZoom={99}
 							yesIWantToUseGoogleMapApiInternals
 							onGoogleApiLoaded={({ map, maps }) =>
 								apiHasLoaded(map, maps)
@@ -158,6 +150,4 @@ const InitCity = (props) => {
 			</Layout>
 		</>
 	);
-};
-
-export default InitCity;
+}

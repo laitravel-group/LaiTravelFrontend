@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
+import { useLocation } from "react-router";
 import { Layout } from "antd";
 import PageHeader from "../components/PageHeader";
-import SimpleMap from "../components/CreatePlanContent";
-import NewPlanSearchBar from "../components/NewPlanSearchBar";
-import { useLocation } from "react-router";
+import NewPlanCreate from "../components/NewPlanCreate";
+import NewPlanBuild from "../components/NewPlanBuild";
 
 const { Content } = Layout;
 
@@ -31,7 +31,7 @@ export default function NewPlan() {
 				<>
 					<PageHeader />
 					<Content>
-						<NewPlanSearchBar
+						<NewPlanCreate
 							setCityLocation={setCityLocation}
 							dates={dates}
 							setDates={setDates}
@@ -41,7 +41,7 @@ export default function NewPlan() {
 			)}
 
 			{subPage === "plan" && (
-				<SimpleMap initCity={cityLocation} dates={dates} />
+				<NewPlanBuild initCity={cityLocation} dates={dates} />
 			)}
 		</Layout>
 	);
