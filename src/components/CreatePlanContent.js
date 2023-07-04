@@ -9,6 +9,7 @@ import {
 	Input,
 	Layout,
 	notification,
+	Popconfirm,
 	Space,
 	Table,
 	TimePicker,
@@ -44,8 +45,6 @@ const colors = [
 	"gold",
 ];
 
-const AnyReactComponent = ({ text }) => <div>{text}</div>;
-
 const SimpleMap = (props) => {
 	const [myPosition, setMyPosition] = useState({
 		lat: props.initCity.lat,
@@ -62,9 +61,13 @@ const SimpleMap = (props) => {
 	let infowindow;
 	const days = props.date[1].diff(props.date[0], "day") + 1;
 	const [plansData, setPlansData] = useState(createPlans(days));
+	const [markerVisible, setMarkerVisible] = useState(createVisible(days));
+	const [recommendation, setRecommendation] = useState(null);
+	const [recomVisible, setRecomVisible] = useState(false);
+	const [recomMarkers, setRecomMarkers] = useState([]);
 
 	function log() {
-		console.log(plansData);
+		console.log(markers);
 	}
 
 	function createPlans(days) {
@@ -74,20 +77,15 @@ const SimpleMap = (props) => {
 		}
 		return plans;
 	}
-	const recommendation = [
-		{
-			key: "0",
-			place: "First Place Name",
-			time: props.date[0].hour(11).minute(30),
-			duration: props.date[0].hour(3).minute(0),
-		},
-		{
-			key: "1",
-			place: "Second Place Name",
-			time: props.date[0].hour(23).minute(30),
-			duration: props.date[0].hour(3).minute(0),
-		},
-	];
+
+	function createVisible(days) {
+		let list = [];
+		list.push(true);
+		for (let i = 1; i <= days; i++) {
+			list.push(false);
+		}
+		return list;
+	}
 
 	const items1 = [];
 	for (let i = 0; i < days; i++) {
@@ -113,10 +111,9 @@ const SimpleMap = (props) => {
 		{
 			key: "3",
 			label: (
-				<a>
-					{" "}
+				<span>
 					Delete <DeleteOutlined />
-				</a>
+				</span>
 			),
 		},
 	];
@@ -124,17 +121,17 @@ const SimpleMap = (props) => {
 		{
 			key: "1",
 			label: (
-				<a>
+				<span>
 					Show <EyeOutlined />
-				</a>
+				</span>
 			),
 		},
 		{
 			key: "2",
 			label: (
-				<a>
+				<span>
 					Hide <EyeInvisibleOutlined />
-				</a>
+				</span>
 			),
 		},
 	];
@@ -177,6 +174,7 @@ const SimpleMap = (props) => {
 								showNow={false}
 								value={record.time}
 								onChange={(e) => {
+									hideAllMarkers(plansData);
 									const newPlans = cloneDeep(plansData);
 									newPlans[row.key][record.key].time = e;
 									setPlansData(newPlans);
@@ -199,6 +197,7 @@ const SimpleMap = (props) => {
 								showNow={false}
 								value={record.duration}
 								onChange={(e) => {
+									hideAllMarkers(plansData);
 									const newPlans = cloneDeep(plansData);
 									newPlans[row.key][record.key].duration = e;
 									setPlansData(newPlans);
@@ -218,8 +217,8 @@ const SimpleMap = (props) => {
 								menu={{
 									items: items2,
 									onClick: (e) => {
-										console.log(e);
 										if (e.key === "1") {
+											hideAllMarkers(plansData);
 											const newPlans =
 												cloneDeep(plansData);
 											const moving = newPlans[
@@ -235,10 +234,20 @@ const SimpleMap = (props) => {
 											) {
 												newPlans[row.key][i].key =
 													i.toString();
+												newPlans[row.key][
+													i
+												].marker.label = `${i + 1}`;
 											}
 											setPlansData(newPlans);
 										}
+										if (e.key === "2") {
+											openInfoWindow(
+												parseInt(row.key),
+												parseInt(record.key)
+											);
+										}
 										if (e.key === "3") {
+											hideAllMarkers(plansData);
 											const newPlans =
 												cloneDeep(plansData);
 											newPlans[row.key].splice(
@@ -252,20 +261,24 @@ const SimpleMap = (props) => {
 											) {
 												newPlans[row.key][i].key =
 													i.toString();
+												newPlans[row.key][
+													i
+												].marker.label = `${i + 1}`;
 											}
 											setPlansData(newPlans);
 										}
 									},
 								}}
 							>
-								<a>
+								<span>
 									Options <DownOutlined />
-								</a>
+								</span>
 							</Dropdown>
 							<Dropdown
 								menu={{
 									items: items1,
 									onClick: (e) => {
+										hideAllMarkers(plansData);
 										const newPlans = cloneDeep(plansData);
 										const moving =
 											newPlans[row.key][record.key];
@@ -278,6 +291,9 @@ const SimpleMap = (props) => {
 										) {
 											newPlans[row.key][i].key =
 												i.toString();
+											newPlans[row.key][
+												i
+											].marker.label = `${i + 1}`;
 										}
 										for (
 											let i = 0;
@@ -286,6 +302,9 @@ const SimpleMap = (props) => {
 										) {
 											newPlans[e.key][i].key =
 												i.toString();
+											newPlans[e.key][
+												i
+											].marker.label = `${i + 1}`;
 										}
 										setPlansData(newPlans);
 									},
@@ -315,22 +334,40 @@ const SimpleMap = (props) => {
 		{
 			title: "Action",
 			key: "operation",
-			render: () => (
-				<Space size="middle">
-					<Dropdown
-						menu={{
-							items: items3,
-						}}
-					>
+			render: (record) => {
+				return (
+					<Space size="middle">
+						<Dropdown
+							menu={{
+								items: items3,
+								onClick: (e) => {
+									const newList = cloneDeep(markerVisible);
+									if (e.key === "1") {
+										newList[
+											parseInt(record.key) + 1
+										] = true;
+										showMarkersInPlan(parseInt(record.key));
+										createListener(parseInt(record.key));
+									} else if (e.key === "2") {
+										newList[
+											parseInt(record.key) + 1
+										] = false;
+										hideMarkersInPlan(parseInt(record.key));
+									}
+									setMarkerVisible(newList);
+								},
+							}}
+						>
+							<span onClick={(e) => e.preventDefault()}>
+								Pins on map <DownOutlined />
+							</span>
+						</Dropdown>
 						<a>
-							Pins on map <DownOutlined />
+							Arrange schedule for today <ScheduleOutlined />
 						</a>
-					</Dropdown>
-					<a>
-						Arrange schedule for today <ScheduleOutlined />
-					</a>
-				</Space>
-			),
+					</Space>
+				);
+			},
 		},
 	];
 	const data = [];
@@ -359,12 +396,24 @@ const SimpleMap = (props) => {
 				render: (record) => {
 					return (
 						<Space style={{ width: 195 }}>
-							<a>Open on map</a>
+							<Typography.Link
+								onClick={() =>
+									openSearchInfoWindow(
+										parseInt(row.key),
+										parseInt(record.key)
+									)
+								}
+							>
+								Open on map
+							</Typography.Link>
 							<span> </span>
 							<Dropdown
 								menu={{
 									items: items1,
 									onClick: (e) => {
+										hideAllMarkers(plansData);
+										hideMarkers();
+										hideRecommendation();
 										const newPlans = cloneDeep(plansData);
 										const moving =
 											placesData[row.key][record.key];
@@ -375,8 +424,11 @@ const SimpleMap = (props) => {
 											.hour(3)
 											.minute(0);
 										moving.marker = cloneDeep(
-											markers[record.key]
+											parseInt(row.key) === 0
+												? recomMarkers[record.key]
+												: markers[record.key]
 										);
+										moving.marker.setMap(null);
 										newPlans[e.key].push(moving);
 										for (
 											let i = 0;
@@ -392,7 +444,12 @@ const SimpleMap = (props) => {
 												mapInstance
 											);
 										}
-										console.log(newPlans);
+										if (markerVisible[0] === true) {
+											showMarkers();
+										}
+										if (recomVisible === true) {
+											showRecommendation();
+										}
 										setPlansData(newPlans);
 									},
 								}}
@@ -417,7 +474,17 @@ const SimpleMap = (props) => {
 				place: places[i].name,
 			});
 		}
-		placesData[0] = recommendation;
+		if (recommendation === null) {
+			createRecommendation();
+		}
+		if (recommendation !== null) {
+			for (let i = 0; i < recommendation.length; i++) {
+				placesData[0].push({
+					key: i.toString(),
+					place: recommendation[i].name,
+				});
+			}
+		}
 
 		let inTable = placesData[row.key];
 		return (
@@ -433,16 +500,39 @@ const SimpleMap = (props) => {
 		{
 			title: "Action",
 			key: "operation",
-			render: () => (
+			render: (record) => (
 				<Space size="middle">
 					<Dropdown
 						menu={{
 							items: items3,
+							onClick: (e) => {
+								if (record.key === "0") {
+									// hide or show recommend
+									if (e.key === "1") {
+										showRecommendation();
+										setRecomVisible(true);
+									} else if (e.key === "2") {
+										hideRecommendation();
+										setRecomVisible(false);
+									}
+								}
+								if (record.key === "1") {
+									const newList = cloneDeep(markerVisible);
+									if (e.key === "1") {
+										showMarkers();
+										newList[0] = true;
+									} else if (e.key === "2") {
+										hideMarkers();
+										newList[0] = false;
+									}
+									setMarkerVisible(newList);
+								}
+							},
 						}}
 					>
-						<a>
+						<span onClick={(e) => e.preventDefault()}>
 							Pins on map <DownOutlined />
-						</a>
+						</span>
 					</Dropdown>
 				</Space>
 			),
@@ -562,12 +652,14 @@ const SimpleMap = (props) => {
 
 		const marker = new mapApi.Marker({
 			position: place.geometry.location,
-			map,
+			map: markerVisible[0] ? map : null,
 			title: place.name,
 			label: `${i + 1}`,
 			optimized: false,
 			content: contentString,
+			background: "#FBBC04",
 		});
+
 		setMarkers((markers) => [...markers, marker]);
 
 		marker.addListener("click", () => {
@@ -577,6 +669,11 @@ const SimpleMap = (props) => {
 		});
 	}
 
+	function showMarkers() {
+		for (let i = 0; i < markers.length; i++) {
+			markers[i].setMap(mapInstance);
+		}
+	}
 	function hideMarkers() {
 		for (let i = 0; i < markers.length; i++) {
 			markers[i].setMap(null);
@@ -585,6 +682,76 @@ const SimpleMap = (props) => {
 	function deleteMarkers() {
 		hideMarkers();
 		setMarkers([]);
+	}
+
+	useEffect(() => {
+		if (mapApiLoaded) {
+			handleMarkerVisible();
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [plansData]);
+	function handleMarkerVisible() {
+		for (let i = 0; i < markerVisible.length; i++) {
+			if (markerVisible[i + 1] === true) {
+				showMarkersInPlan(i);
+				createListener(i);
+			} else if (markerVisible[i + 1] === false) {
+				hideMarkersInPlan(i);
+			}
+		}
+	}
+	function showMarkersInPlan(index) {
+		for (let i = 0; i < plansData[index].length; i++) {
+			plansData[index][i].marker.setMap(mapInstance);
+		}
+	}
+	function hideMarkersInPlan(index) {
+		for (let i = 0; i < plansData[index].length; i++) {
+			plansData[index][i].marker.setMap(null);
+		}
+	}
+	function createListener(index) {
+		for (let i = 0; i < plansData[index].length; i++) {
+			plansData[index][i].marker.addListener("click", () => {
+				infowindow.close();
+				infowindow.setContent(plansData[index][i].marker.content);
+				infowindow.open(mapInstance, plansData[index][i].marker);
+			});
+		}
+	}
+	function hideAllMarkers(oldPlans) {
+		for (let i = 0; i < oldPlans.length; i++) {
+			for (let j = 0; j < oldPlans[i].length; j++) {
+				oldPlans[i][j].marker.setMap(null);
+			}
+		}
+	}
+	function openInfoWindow(day, spot) {
+		showMarkersInPlan(day);
+		infowindow.close();
+		infowindow.setContent(plansData[day][spot].marker.content);
+		infowindow.open(mapInstance, plansData[day][spot].marker);
+		const newList = cloneDeep(markerVisible);
+		newList[day + 1] = true;
+		setMarkerVisible(newList);
+	}
+	function openSearchInfoWindow(row, spot) {
+		if (row === 0) {
+			showRecommendation();
+			infowindow.close();
+			infowindow.setContent(recomMarkers[spot].content);
+			infowindow.open(mapInstance, recomMarkers[spot]);
+			setRecomVisible(true);
+		}
+		if (row === 1) {
+			showMarkers();
+			infowindow.close();
+			infowindow.setContent(markers[spot].content);
+			infowindow.open(mapInstance, markers[spot]);
+			const newList = cloneDeep(markerVisible);
+			newList[0] = true;
+			setMarkerVisible(newList);
+		}
 	}
 
 	const handleAutocomplete = () => {
@@ -679,6 +846,95 @@ const SimpleMap = (props) => {
 		});
 	};
 
+	const createRecommendation = () => {
+		if (mapApiLoaded) {
+			const service = new mapApi.places.PlacesService(mapInstance);
+
+			const request = {
+				location: { lat: props.initCity.lat, lng: props.initCity.lng },
+				radius: 30000,
+				keyword: "famous travel spot",
+				rankBy: mapApi.places.RankBy.PROMINENCE,
+			};
+
+			service.nearbySearch(request, (results, status) => {
+				if (
+					status === mapApi.places.PlacesServiceStatus.OK &&
+					results
+				) {
+					setRecommendation(results);
+					deleteRecomMarkers();
+					for (let i = 0; i < results.length; i++) {
+						createRecomMarker(results[i], i, mapInstance);
+					}
+					return;
+				}
+				console.log("No Recommendation");
+			});
+		}
+	};
+	function createRecomMarker(place, i, map) {
+		if (!place.geometry || !place.geometry.location) return;
+
+		let photos = place.photos;
+		let contentString;
+
+		contentString =
+			photos !== undefined
+				? '<div id="content">' +
+				  '<h1 id="firstHeading" class="firstHeading">' +
+				  place.name +
+				  "</h1>" +
+				  '<div id="bodyContent">' +
+				  '<img src="' +
+				  photos[0].getUrl({ maxWidth: 500, maxHeight: 500 }) +
+				  '" alt="" width="500" height="500">' +
+				  "</div>" +
+				  "</div>"
+				: '<div id="content">' +
+				  '<h1 id="firstHeading" class="firstHeading">' +
+				  place.name +
+				  "</h1>" +
+				  '<div id="bodyContent">' +
+				  '<h1 id="secondHeading" class="secondHeading">' +
+				  "NO IMAGE AVAILABLE" +
+				  "</h1>" +
+				  "</div>" +
+				  "</div>";
+
+		const marker = new mapApi.Marker({
+			position: place.geometry.location,
+			map: null,
+			title: place.name,
+			label: `${i + 1}`,
+			optimized: false,
+			content: contentString,
+		});
+
+		setRecomMarkers((markers) => [...markers, marker]);
+
+		marker.addListener("click", () => {
+			infowindow.close();
+			infowindow.setContent(marker.content);
+			infowindow.open(marker.getMap(), marker);
+		});
+	}
+
+	function showRecommendation() {
+		for (let i = 0; i < recomMarkers.length; i++) {
+			recomMarkers[i].setMap(mapInstance);
+		}
+	}
+	function hideRecommendation() {
+		for (let i = 0; i < recomMarkers.length; i++) {
+			recomMarkers[i].setMap(null);
+		}
+	}
+	function deleteRecomMarkers() {
+		hideRecommendation();
+		setRecomMarkers([]);
+	}
+
 	return (
 		// Important! Always set the container height explicitly
 		<div style={{ height: "100vh" }}>
@@ -713,13 +969,7 @@ const SimpleMap = (props) => {
 							onGoogleApiLoaded={({ map, maps }) =>
 								apiHasLoaded(map, maps)
 							}
-						>
-							<AnyReactComponent
-								lat={myPosition.lat}
-								lng={myPosition.lng}
-								text="Search Nearby Places Around Here!"
-							/>
-						</GoogleMap>
+						></GoogleMap>
 					</div>
 				</Sider>
 				<Layout
@@ -809,9 +1059,16 @@ const SimpleMap = (props) => {
 							textAlign: "center",
 						}}
 					>
-						<Button type="primary" onClick={handleReset}>
-							Reset Travel Plan
-						</Button>
+						<Popconfirm
+							title="Reset Travel Plan"
+							description="Are you sure to reset this plan? All data will be lost."
+							onConfirm={handleReset}
+							onCancel={console.log("cancel")}
+							okText="Yes"
+							cancelText="No"
+						>
+							<Button type="primary">Reset Travel Plan</Button>
+						</Popconfirm>
 						<Button type="primary" onClick={log}>
 							Save This Travel Plan!
 						</Button>
