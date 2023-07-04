@@ -41,7 +41,7 @@ export default function NewPlan() {
 			)}
 
 			{subPage === "plan" && (
-				<NewPlanBuild initCity={cityLocation} dates={dates} />
+				<NewPlanBuild cityLocation={cityLocation} dates={dates} />
 			)}
 		</Layout>
 	);

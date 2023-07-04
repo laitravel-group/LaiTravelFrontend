@@ -46,25 +46,25 @@ const colors = [
 const AnyReactComponent = ({ text }) => <div>{text}</div>;
 
 export default function NewPlanBuild(props) {
+	const { cityLocation, dates } = props;
+
 	const [myPosition, setMyPosition] = useState({
-		lat: props.initCity.lat,
-		lng: props.initCity.lng,
+		lat: cityLocation.lat,
+		lng: cityLocation.lng,
 	});
 	const [mapApiLoaded, setMapApiLoaded] = useState(false);
 	const [mapInstance, setMapInstance] = useState(null);
 	const [mapApi, setMapApi] = useState(null);
 	const [places, setPlaces] = useState([]);
-	const [searchKeyword, setSearchKeyWord] = useState("");
+	const [searchKeyword, setSearchKeyword] = useState("");
 	const [autoInput, setAutoInput] = useState("");
 	const [autoList, setAutoList] = useState([]);
 	const [markers, setMarkers] = useState([]);
 	let infowindow;
-	const days = props.dates[1].diff(props.dates[0], "day") + 1;
-	const [plansData, setPlansData] = useState(createPlans(days));
 
-	function log() {
-		console.log(plansData);
-	}
+	// days in trip
+	const days = dates[1].diff(dates[0], "day") + 1;
+	const [plansData, setPlansData] = useState(createPlans(days));
 
 	function createPlans(days) {
 		let plans = [];
@@ -77,14 +77,14 @@ export default function NewPlanBuild(props) {
 		{
 			key: "0",
 			place: "First Place Name",
-			time: props.dates[0].hour(11).minute(30),
-			duration: props.dates[0].hour(3).minute(0),
+			time: dates[0].hour(11).minute(30),
+			duration: dates[0].hour(3).minute(0),
 		},
 		{
 			key: "1",
 			place: "Second Place Name",
-			time: props.dates[0].hour(23).minute(30),
-			duration: props.dates[0].hour(3).minute(0),
+			time: dates[0].hour(23).minute(30),
+			duration: dates[0].hour(3).minute(0),
 		},
 	];
 
@@ -95,7 +95,7 @@ export default function NewPlanBuild(props) {
 			label: (
 				<span>
 					<CalendarOutlined />{" "}
-					{[props.dates[0].add(i, "day").format("MMM Do")]}
+					{[dates[0].add(i, "day").format("MMM Do")]}
 				</span>
 			),
 		});
@@ -339,7 +339,7 @@ export default function NewPlanBuild(props) {
 			date: (
 				<span>
 					<CalendarOutlined />{" "}
-					{[props.dates[0].add(i, "day").format("dddd, MMM Do")]}
+					{[dates[0].add(i, "day").format("dddd, MMM Do")]}
 				</span>
 			),
 		});
@@ -367,10 +367,10 @@ export default function NewPlanBuild(props) {
 										const newPlans = cloneDeep(plansData);
 										const moving =
 											placesData[row.key][record.key];
-										moving.time = props.dates[0]
+										moving.time = dates[0]
 											.hour(8)
 											.minute(0);
-										moving.duration = props.dates[0]
+										moving.duration = dates[0]
 											.hour(3)
 											.minute(0);
 										moving.marker = cloneDeep(
@@ -472,8 +472,8 @@ export default function NewPlanBuild(props) {
 
 	const defaultProps = {
 		center: {
-			lat: props.initCity.lat,
-			lng: props.initCity.lng,
+			lat: cityLocation.lat,
+			lng: cityLocation.lng,
 		},
 		zoom: 11,
 	};
@@ -750,7 +750,7 @@ export default function NewPlanBuild(props) {
 								placeholder="Search nearby by keyword"
 								value={searchKeyword}
 								onChange={(e) =>
-									setSearchKeyWord(e.target.value)
+									setSearchKeyword(e.target.value)
 								}
 								onPressEnter={() => findMultiLocation()}
 							/>
@@ -811,7 +811,7 @@ export default function NewPlanBuild(props) {
 						<Button type="primary" onClick={handleReset}>
 							Reset Travel Plan
 						</Button>
-						<Button type="primary" onClick={log}>
+						<Button type="primary" onClick={() => {}}>
 							Save This Travel Plan!
 						</Button>
 					</Footer>

@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { Button, DatePicker, Input, Layout, message } from "antd";
-import { Content } from "antd/es/layout/layout";
 import GoogleMap from "google-maps-react-markers";
 import dayjs from "dayjs";
 import { getFormatString } from "../utils";
 import { apiKey } from "../key";
 
+const { Content } = Layout;
 const { RangePicker } = DatePicker;
 
 export default function NewPlanCreate(props) {
