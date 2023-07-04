@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Layout, Button, Col } from "antd";
 import { Link } from "react-router-dom";
 import { LogoutOutlined } from "@ant-design/icons";
@@ -6,63 +6,122 @@ import { LogoutOutlined } from "@ant-design/icons";
 const { Content } = Layout;
 
 export default function UserPage(props) {
-  return (
-    <Layout style={{ height: "100vh", backgroundColor: "rgba(0, 0, 0, 0.3)" }}>
-      <div className="background-image"></div>
+  const [showProfile, setShowProfile] = useState(true);
+  const [showMyPlans, setShowMyPlans] = useState(false);
+  const [editMode, setEditMode] = useState(false);
+  const [username, setUsername] = useState("XXX XX");
+  const [email, setEmail] = useState("XXXXX@example.com");
 
+  const handleMyPlansClick = () => {
+    setShowProfile(false);
+    setShowMyPlans(true);
+    setEditMode(false);
+  };
+
+  const handleProfileClick = () => {
+    setShowProfile(true);
+    setShowMyPlans(false);
+    setEditMode(false);
+  };
+
+  const handleEditProfileClick = () => {
+    setShowProfile(true);
+    setShowMyPlans(false);
+    setEditMode(true);
+  };
+
+  const handleUsernameChange = (e) => {
+    setUsername(e.target.value);
+  };
+
+  const handleEmailChange = (e) => {
+    setEmail(e.target.value);
+  };
+
+  return (
+    <Layout
+      style={{
+        height: "100vh",
+        backgroundImage: "url(./pic.png)",
+        backgroundSize: "cover",
+        backgroundRepeat: "no-repeat",
+        backgroundPosition: "center",
+      }}
+    >
       <Col className="home-panel">
         <Content style={{ marginTop: "150px" }}>
           <div className="button-column">
-            <Link to="/new_plan">
-              <Button
-                type="primary"
-                id="home-new-trip-button"
-                className="ant-btn-header"
-              >
-                New Plan
-              </Button>
-            </Link>
+            <Button
+              type="primary"
+              id="home-new-trip-button"
+              className="ant-btn-header"
+              onClick={handleProfileClick}
+            >
+              New Plan
+            </Button>
 
-            <Link to="/my_plans">
-              <Button
-                type="primary"
-                id="user-my-trip-button"
-                className="ant-btn-header"
-              >
-                My Plan
-              </Button>
-            </Link>
+            <Button
+              type="primary"
+              id="user-my-trip-button"
+              className="ant-btn-header"
+              onClick={handleMyPlansClick}
+            >
+              My Plan
+            </Button>
 
-            <Link to="/profile">
-              <Button
-                type="primary"
-                id="user-profile-button"
-                className="ant-btn-header"
-              >
-                Profile
-              </Button>
-            </Link>
+            <Button
+              type="primary"
+              id="user-profile-button"
+              className="ant-btn-header"
+              onClick={handleProfileClick}
+            >
+              Profile
+            </Button>
 
-            <Link to="/edit_profile">
-              <Button
-                type="primary"
-                id="user-edit-profile-button"
-                className="ant-btn-header"
-              >
-                Edit Profile
-              </Button>
-            </Link>
+            <Button
+              type="primary"
+              id="user-edit-profile-button"
+              className="ant-btn-header"
+              onClick={handleEditProfileClick}
+            >
+              Edit Profile
+            </Button>
           </div>
         </Content>
       </Col>
 
-      <div className="profile-panel">
-        <div className="profile-info">
-          <div className="profile-picture"></div>
-          <div className="user-name">XXX XX</div>
-          <div className="email">XXXXX@example.com</div>
+      {showProfile && (
+        <div className="profile-panel">
+          <div className="profile-info">
+            <div className="profile-picture"></div>
+            {editMode ? (
+              <>
+                <input
+                  type="text"
+                  value={username}
+                  onChange={handleUsernameChange}
+                />
+                <input type="text" value={email} onChange={handleEmailChange} />
+              </>
+            ) : (
+              <>
+                <div className="user-name">{username}</div>
+                <div className="email">{email}</div>
+              </>
+            )}
+          </div>
         </div>
-      </div>
+      )}
+
+      {showMyPlans && (
+        <div className="my-plans-panel">
+          <div className="my-plans-header">List of trip plans historys</div>
+          <div className="my-plans-list">
+            {/* Render trip plans historys here */}
+          </div>
+          <div className="empty-spaces"></div>
+        </div>
+      )}
 
       <Button
         type="primary"
@@ -75,24 +134,12 @@ export default function UserPage(props) {
 
       <style>
         {`
-          .background-image {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: url(${process.env.PUBLIC_URL}/pic.png);
-            background-size: cover;
-            background-position: center;
-            opacity: 0.5;
-          }
-
           .home-panel {
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            width: 200px;
+            width: 600px;
             background-color: transparent;
             padding: 20px;
             margin-right: 20px;
@@ -115,18 +162,28 @@ export default function UserPage(props) {
             text-transform: uppercase;
           }
 
-          .profile-panel {
+          .profile-panel,
+          .my-plans-panel {
             display: flex;
             justify-content: center;
             align-items: center;
             position: absolute;
-            right: 500px;
+            right: 30%;
             top: 50%;
-            transform: translateY(-50%);
+            transform: translate(0, -50%);
             width: 200px;
             background-color: yellow;
-            padding: 20px;
+            padding: 150px;
             text-align: center;
+            opacity: 0.9;
+          }
+
+          .profile-panel {
+            display: ${showProfile ? "flex" : "none"};
+          }
+
+          .my-plans-panel {
+            display: ${showMyPlans ? "flex" : "none"};
           }
 
           .profile-picture {
@@ -139,7 +196,19 @@ export default function UserPage(props) {
 
           .user-name,
           .email {
-            margin-top: 50px;
+            margin-top: 10px;
+          }
+
+          .my-plans-header {
+            font-weight: bold;
+          }
+
+          .my-plans-list {
+            margin-top: 10px;
+          }
+
+          .empty-spaces {
+            height: 100px;
           }
         `}
       </style>
