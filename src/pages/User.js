@@ -1,128 +1,132 @@
-import React, { useState } from "react";
-import { Layout } from "antd";
+import React from "react";
+import { Layout, Button, Col } from "antd";
 import { Link } from "react-router-dom";
-import { Button, Col } from "antd";
 import { LogoutOutlined } from "@ant-design/icons";
 
 const { Content } = Layout;
 
 export default function UserPage(props) {
-  const [showProfilePanel, setShowProfilePanel] = useState(true);
-  const [showMyPlansPanel, setShowMyPlansPanel] = useState(false);
-
-  const handleMyPlansClick = () => {
-    setShowProfilePanel(false);
-    setShowMyPlansPanel(true);
-  };
-
-  const handleProfileClick = () => {
-    setShowProfilePanel(true);
-    setShowMyPlansPanel(false);
-  };
-
   return (
-    <Layout style={{ height: "100vh" }}>
+    <Layout style={{ height: "100vh", backgroundColor: "rgba(0, 0, 0, 0.3)" }}>
+      <div className="background-image"></div>
+
       <Col className="home-panel">
-        <Content style={{ marginTop: "50px" }}>
-          <Link to="/new_plan">
-            <Button
-              type="primary"
-              id="home-new-trip-button"
-              className="yellow-button"
-            >
-              New Plan
-            </Button>
-          </Link>
+        <Content style={{ marginTop: "150px" }}>
+          <div className="button-column">
+            <Link to="/new_plan">
+              <Button
+                type="primary"
+                id="home-new-trip-button"
+                className="ant-btn-header"
+              >
+                New Plan
+              </Button>
+            </Link>
 
-          <Link to="/my_plans">
-            <Button
-              type="primary"
-              id="user-my-trip-button"
-              className="yellow-button"
-              onClick={handleMyPlansClick}
-            >
-              My Plan
-            </Button>
-          </Link>
+            <Link to="/my_plans">
+              <Button
+                type="primary"
+                id="user-my-trip-button"
+                className="ant-btn-header"
+              >
+                My Plan
+              </Button>
+            </Link>
 
-          <Link to="/profile">
-            <Button
-              type="primary"
-              id="user-profile-button"
-              className="yellow-button"
-              onClick={handleProfileClick}
-            >
-              Profile
-            </Button>
-          </Link>
+            <Link to="/profile">
+              <Button
+                type="primary"
+                id="user-profile-button"
+                className="ant-btn-header"
+              >
+                Profile
+              </Button>
+            </Link>
 
-          <Link to="/edit_profile">
-            <Button
-              type="primary"
-              id="user-edit-profile-button"
-              className="yellow-button"
-              onClick={handleProfileClick}
-            >
-              Edit Profile
-            </Button>
-          </Link>
+            <Link to="/edit_profile">
+              <Button
+                type="primary"
+                id="user-edit-profile-button"
+                className="ant-btn-header"
+              >
+                Edit Profile
+              </Button>
+            </Link>
+          </div>
         </Content>
       </Col>
 
-      {showProfilePanel && (
-        <div className="profile-panel">
-          <div className="profile-info">
-            <div className="profile-picture"></div>
-            <div className="user-name">XXX XX</div>
-            <div className="email">XXXXX@example.com</div>
-          </div>
-          <Button
-            type="primary"
-            className="sign-out-button"
-            icon={<LogoutOutlined />}
-          >
-            Sign Out
-          </Button>
+      <div className="profile-panel">
+        <div className="profile-info">
+          <div className="profile-picture"></div>
+          <div className="user-name">XXX XX</div>
+          <div className="email">XXXXX@example.com</div>
         </div>
-      )}
+      </div>
 
-      {showMyPlansPanel && (
-        <div className="yellow-panel">
-          <div className="yellow-panel-content">
-            List of trip plans historys
-          </div>
-        </div>
-      )}
+      <Button
+        type="primary"
+        className="sign-out-button"
+        icon={<LogoutOutlined />}
+        style={{ position: "absolute", top: "10px", right: "10px" }}
+      >
+        Sign Out
+      </Button>
 
       <style>
         {`
-          .home-panel button {
+          .background-image {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url(${process.env.PUBLIC_URL}/pic.png);
+            background-size: cover;
+            background-position: center;
+            opacity: 0.5;
+          }
+
+          .home-panel {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 200px;
+            background-color: transparent;
+            padding: 20px;
+            margin-right: 20px;
+          }
+
+          .button-column {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+          }
+
+          .button-column button.ant-btn-header {
+            display: block;
+            margin-bottom: 10px;
             background-color: yellow;
             color: black;
-          }
-
-          .yellow-panel {
-            position: fixed;
-            right: 0;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 200px;
-            background-color: yellow;
-            padding: 20px;
-          }
-
-          .yellow-panel-content {
-            text-align: center;
+            border: none;
+            font-size: 16px;
+            font-weight: bold;
+            text-transform: uppercase;
           }
 
           .profile-panel {
-            position: fixed;
-            right: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: absolute;
+            right: 500px;
             top: 50%;
             transform: translateY(-50%);
             width: 200px;
-            background-color: #f1f1f1;
+            background-color: yellow;
             padding: 20px;
+            text-align: center;
           }
 
           .profile-picture {
@@ -135,8 +139,7 @@ export default function UserPage(props) {
 
           .user-name,
           .email {
-            text-align: center;
-            margin-top: 10px;
+            margin-top: 50px;
           }
         `}
       </style>
