@@ -21,19 +21,19 @@ export default function User(props) {
           </Link>
 
           <Link to="/my_plans">
-            <Button type="primary" id="home-my-trip-button">
+            <Button type="primary" id="user-my-trip-plans-history-button">
               My Plan
             </Button>
           </Link>
 
           <Link to="/profile">
-            <Button type="primary" id="home-profile-button">
+            <Button type="primary" id="user-profile-button">
               Profile
             </Button>
           </Link>
 
           <Link to="/edit_profile">
-            <Button type="primary" id="home-edit-profile-button">
+            <Button type="primary" id="user-edit-profile-button">
               Edit Profile
             </Button>
           </Link>
