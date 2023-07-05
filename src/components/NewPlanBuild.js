@@ -60,19 +60,21 @@ export default function NewPlanBuild(props) {
 	const [autoInput, setAutoInput] = useState("");
 	const [autoList, setAutoList] = useState([]);
 	const [markers, setMarkers] = useState([]);
-	let infowindow;
 
 	// days in trip
-	const days = dates[1].diff(dates[0], "day") + 1;
-	const [plansData, setPlansData] = useState(createPlans(days));
 
-	function createPlans(days) {
+	let infowindow;
+	// initialise array of daily plans
+	const initPlanData = (days) => {
 		let plans = [];
 		for (let i = 0; i < days; i++) {
 			plans.push([]);
 		}
 		return plans;
-	}
+	};
+	const numDays = dates[1].diff(dates[0], "day") + 1;
+	const [planData, setPlanData] = useState(initPlanData(numDays));
+
 	const recommendation = [
 		{
 			key: "0",
@@ -89,7 +91,7 @@ export default function NewPlanBuild(props) {
 	];
 
 	const items1 = [];
-	for (let i = 0; i < days; i++) {
+	for (let i = 0; i < numDays; i++) {
 		items1.push({
 			key: i.toString(),
 			label: (
@@ -176,9 +178,9 @@ export default function NewPlanBuild(props) {
 								showNow={false}
 								value={record.time}
 								onChange={(e) => {
-									const newPlans = cloneDeep(plansData);
+									const newPlans = cloneDeep(planData);
 									newPlans[row.key][record.key].time = e;
-									setPlansData(newPlans);
+									setPlanData(newPlans);
 								}}
 							/>
 						</Space>
@@ -198,9 +200,9 @@ export default function NewPlanBuild(props) {
 								showNow={false}
 								value={record.duration}
 								onChange={(e) => {
-									const newPlans = cloneDeep(plansData);
+									const newPlans = cloneDeep(planData);
 									newPlans[row.key][record.key].duration = e;
-									setPlansData(newPlans);
+									setPlanData(newPlans);
 								}}
 							/>
 						</Space>
@@ -220,7 +222,7 @@ export default function NewPlanBuild(props) {
 										console.log(e);
 										if (e.key === "1") {
 											const newPlans =
-												cloneDeep(plansData);
+												cloneDeep(planData);
 											const moving = newPlans[
 												row.key
 											].splice(record.key, 1);
@@ -235,11 +237,11 @@ export default function NewPlanBuild(props) {
 												newPlans[row.key][i].key =
 													i.toString();
 											}
-											setPlansData(newPlans);
+											setPlanData(newPlans);
 										}
 										if (e.key === "3") {
 											const newPlans =
-												cloneDeep(plansData);
+												cloneDeep(planData);
 											newPlans[row.key].splice(
 												record.key,
 												1
@@ -252,7 +254,7 @@ export default function NewPlanBuild(props) {
 												newPlans[row.key][i].key =
 													i.toString();
 											}
-											setPlansData(newPlans);
+											setPlanData(newPlans);
 										}
 									},
 								}}
@@ -265,7 +267,7 @@ export default function NewPlanBuild(props) {
 								menu={{
 									items: items1,
 									onClick: (e) => {
-										const newPlans = cloneDeep(plansData);
+										const newPlans = cloneDeep(planData);
 										const moving =
 											newPlans[row.key][record.key];
 										newPlans[row.key].splice(record.key, 1);
@@ -286,7 +288,7 @@ export default function NewPlanBuild(props) {
 											newPlans[e.key][i].key =
 												i.toString();
 										}
-										setPlansData(newPlans);
+										setPlanData(newPlans);
 									},
 								}}
 							>
@@ -300,7 +302,7 @@ export default function NewPlanBuild(props) {
 			},
 		];
 
-		let inTable = plansData[row.key];
+		let inTable = planData[row.key];
 		return (
 			<Table columns={columns} dataSource={inTable} pagination={false} />
 		);
@@ -333,7 +335,7 @@ export default function NewPlanBuild(props) {
 		},
 	];
 	const data = [];
-	for (let i = 0; i < days; ++i) {
+	for (let i = 0; i < numDays; ++i) {
 		data.push({
 			key: i.toString(),
 			date: (
@@ -364,7 +366,7 @@ export default function NewPlanBuild(props) {
 								menu={{
 									items: items1,
 									onClick: (e) => {
-										const newPlans = cloneDeep(plansData);
+										const newPlans = cloneDeep(planData);
 										const moving =
 											placesData[row.key][record.key];
 										moving.time = dates[0]
@@ -392,7 +394,7 @@ export default function NewPlanBuild(props) {
 											);
 										}
 										console.log(newPlans);
-										setPlansData(newPlans);
+										setPlanData(newPlans);
 									},
 								}}
 							>
