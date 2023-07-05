@@ -5,6 +5,7 @@ import {
 	AutoComplete,
 	Badge,
 	Button,
+	Drawer,
 	Dropdown,
 	Input,
 	Layout,
@@ -27,6 +28,7 @@ import {
 	ScheduleOutlined,
 	SearchOutlined,
 } from "@ant-design/icons";
+// import { buildTripPlan } from "../api";
 
 const { Content, Footer, Sider } = Layout;
 const colors = [
@@ -65,9 +67,13 @@ const SimpleMap = (props) => {
 	const [recommendation, setRecommendation] = useState(null);
 	const [recomVisible, setRecomVisible] = useState(false);
 	const [recomMarkers, setRecomMarkers] = useState([]);
+	const [openPlanSelect, setOpenPlanSelect] = useState(false);
+	const [selectedDate, setSelectedDate] = useState(-1);
+	const [efficientPlan, setEffientPlan] = useState([]);
+	const [morePalcesPlan, setMorePlacesPlan] = useState([]);
 
 	function log() {
-		console.log(markers);
+		console.log(places);
 	}
 
 	function createPlans(days) {
@@ -362,9 +368,11 @@ const SimpleMap = (props) => {
 								Pins on map <DownOutlined />
 							</span>
 						</Dropdown>
-						<a>
+						<Typography.Link
+							onClick={() => showPlanDrawer(parseInt(record.key))}
+						>
 							Arrange schedule for today <ScheduleOutlined />
-						</a>
+						</Typography.Link>
 					</Space>
 				);
 			},
@@ -472,6 +480,7 @@ const SimpleMap = (props) => {
 			placesData[1].push({
 				key: i.toString(),
 				place: places[i].name,
+				place_detail: places[i],
 			});
 		}
 		if (recommendation === null) {
@@ -479,9 +488,13 @@ const SimpleMap = (props) => {
 		}
 		if (recommendation !== null) {
 			for (let i = 0; i < recommendation.length; i++) {
+				if (i === 20) {
+					break;
+				}
 				placesData[0].push({
 					key: i.toString(),
 					place: recommendation[i].name,
+					place_detail: recommendation[i],
 				});
 			}
 		}
@@ -507,7 +520,6 @@ const SimpleMap = (props) => {
 							items: items3,
 							onClick: (e) => {
 								if (record.key === "0") {
-									// hide or show recommend
 									if (e.key === "1") {
 										showRecommendation();
 										setRecomVisible(true);
@@ -608,8 +620,10 @@ const SimpleMap = (props) => {
 					results
 				) {
 					console.log(results);
-					console.log(places);
-					setPlaces(results);
+					setPlaces([]);
+					for (let i = 0; i < results.length; i++) {
+						detailsSearch(results[i].place_id, 0);
+					}
 					deleteMarkers();
 					for (let i = 0; i < results.length; i++) {
 						createMarker(results[i], i, mapInstance);
@@ -825,8 +839,10 @@ const SimpleMap = (props) => {
 					results
 				) {
 					console.log(results);
-					console.log(places);
-					setPlaces(results);
+					setPlaces([]);
+					for (let i = 0; i < results.length; i++) {
+						detailsSearch(results[i].place_id, 0);
+					}
 					deleteMarkers();
 					for (let i = 0; i < results.length; i++) {
 						createMarker(results[i], i, mapInstance);
@@ -835,6 +851,44 @@ const SimpleMap = (props) => {
 				}
 				console.log("error");
 				openNotification();
+			});
+		}
+	};
+
+	const detailsSearch = (id, index) => {
+		if (mapApiLoaded) {
+			const service = new mapApi.places.PlacesService(mapInstance);
+
+			const request = {
+				placeId: id,
+				fields: [
+					"name",
+					"opening_hours",
+					"place_id",
+					"geometry",
+					"photos",
+				],
+			};
+
+			service.getDetails(request, (place, status) => {
+				if (
+					status === mapApi.places.PlacesServiceStatus.OK &&
+					place &&
+					place.geometry &&
+					place.geometry.location
+				) {
+					if (index === 0) {
+						setPlaces((places) => [...places, place]);
+					}
+					if (index === 1) {
+						setRecommendation((recommendation) => [
+							...recommendation,
+							place,
+						]);
+					}
+					return;
+				}
+				console.log("error");
 			});
 		}
 	};
@@ -862,7 +916,10 @@ const SimpleMap = (props) => {
 					status === mapApi.places.PlacesServiceStatus.OK &&
 					results
 				) {
-					setRecommendation(results);
+					setRecommendation([]);
+					for (let i = 0; i < results.length; i++) {
+						detailsSearch(results[i].place_id, 1);
+					}
 					deleteRecomMarkers();
 					for (let i = 0; i < results.length; i++) {
 						createRecomMarker(results[i], i, mapInstance);
@@ -934,6 +991,170 @@ const SimpleMap = (props) => {
 		hideRecommendation();
 		setRecomMarkers([]);
 	}
+
+	const showPlanDrawer = (day) => {
+		setSelectedDate(day);
+		createPlanData(day);
+		setOpenPlanSelect(true);
+	};
+	const onCloseDrawer = () => {
+		setOpenPlanSelect(false);
+	};
+
+	const createPlanData = (day) => {
+		setEffientPlan([]);
+		setMorePlacesPlan([]);
+		if (plansData[day].length === 0) {
+			return;
+		}
+		const request = {
+			init: true,
+			desired_plan: {
+				date: props.date[0].add(day, "day"),
+				start_location: plansData[day][0].place_detail,
+				start_time: plansData[day][0].time
+					.add(plansData[day][0].duration.get("hour"), "hour")
+					.add(plansData[day][0].duration.get("minute"), "minute"),
+				visits: [],
+			},
+		};
+		for (let i = 0; i < plansData[day].length - 1; i++) {
+			request.desired_plan.visits.push([]);
+			request.desired_plan.visits[i] = {
+				place: plansData[day][i + 1].place_detail,
+				stay_duration: plansData[day][i + 1].duration,
+			};
+		}
+		setEffientPlan(dataPlans);
+		// uncomment below and delete above when backend api is working
+		// const result = buildTripPlan(request);
+		// const ePlan = [];
+		// ePlan.push({
+		// 	key: "0",
+		// 	place: plansData[day][0].place,
+		// 	start_time: plansData[day][0].time,
+		// 	stay_duration: plansData[day][0].duration,
+		// })
+		// for (let i = 0; i < result.proposed_plans[0].visits.length; i++) {
+		// 	ePlan.push({
+		// 		key: (i + 1).toString(),
+		// 		Place: result.proposed_plans[0].visits[i].place.name,
+		// 		start_time: result.proposed_plans[0].visits[i].start_time,
+		// 		stay_duration: result.proposed_plans[0].visits[i].stay_duration,
+		// 	})
+		// }
+		// setEffientPlan(ePlan);
+		// const pPlan = [];
+		// pPlan.push({
+		// 	key: "0",
+		// 	place: plansData[day][0].place,
+		// 	start_time: plansData[day][0].time,
+		// 	stay_duration: plansData[day][0].duration,
+		// })
+		// for (let i = 0; i < result.proposed_plans[1].visits.length; i++) {
+		// 	ePlan.push({
+		// 		key: (i + 1).toString(),
+		// 		Place: result.proposed_plans[1].visits[i].place.name,
+		// 		start_time: result.proposed_plans[1].visits[i].start_time,
+		// 		stay_duration: result.proposed_plans[1].visits[i].stay_duration,
+		// 	})
+		// }
+		// setMorePlacesPlan(pPlan);
+	};
+	const saveEfficientPlan = () => {
+		hideAllMarkers(plansData);
+		const newPlans = cloneDeep(plansData);
+		newPlans[selectedDate] = [];
+		for (let i = 0; i < efficientPlan.length; i++) {
+			if (i === 0) {
+				newPlans[selectedDate].push(plansData[selectedDate][0]);
+			} else {
+				for (let j = 1; j < plansData[selectedDate].length; j++) {
+					if (
+						efficientPlan[i].place ===
+						plansData[selectedDate][j].place
+					) {
+						newPlans[selectedDate].push(plansData[selectedDate][j]);
+						newPlans[selectedDate][i].time =
+							efficientPlan[i].start_time;
+						newPlans[selectedDate][i].duration =
+							efficientPlan[i].stay_duration;
+					}
+				}
+			}
+		}
+		for (let i = 0; i < newPlans[selectedDate].length; i++) {
+			console.log(newPlans[selectedDate][i]);
+			newPlans[selectedDate][i].key = i.toString();
+			newPlans[selectedDate][i].marker.label = `${i + 1}`;
+		}
+		setPlansData(newPlans);
+		setOpenPlanSelect(false);
+	};
+	const saveMorePalcesPlan = () => {
+		hideAllMarkers(plansData);
+		const newPlans = cloneDeep(plansData);
+		newPlans[selectedDate] = [];
+		for (let i = 0; i < morePalcesPlan.length; i++) {
+			if (i === 0) {
+				newPlans[selectedDate].push(plansData[selectedDate][0]);
+			} else {
+				for (let j = 1; j < plansData[selectedDate].length; j++) {
+					if (
+						morePalcesPlan[i].place ===
+						plansData[selectedDate][j].place
+					) {
+						newPlans[selectedDate].push(plansData[selectedDate][j]);
+						newPlans[selectedDate][i].time =
+							morePalcesPlan[i].start_time;
+						newPlans[selectedDate][i].duration =
+							morePalcesPlan[i].stay_duration;
+					}
+				}
+			}
+		}
+		for (let i = 0; i < newPlans[selectedDate].length; i++) {
+			newPlans[selectedDate][i].key = i.toString();
+			newPlans[selectedDate][i].marker.label = `${i + 1}`;
+		}
+		setPlansData(newPlans);
+		setOpenPlanSelect(false);
+	};
+	const columnsPlans = [
+		{
+			title: "Place",
+			dataIndex: "place",
+		},
+		{
+			title: "Start Time",
+			dataIndex: "start_time",
+			align: "right",
+		},
+		{
+			title: "Duration",
+			dataIndex: "stay_duration",
+		},
+	];
+	const dataPlans = [
+		{
+			key: "0",
+			place: "Place1",
+			start_time: "8:00 AM",
+			stay_duration: "3:00",
+		},
+		{
+			key: "1",
+			place: "Place2",
+			start_time: "11:00 AM",
+			stay_duration: "3:00",
+		},
+		{
+			key: "2",
+			place: "Place3",
+			start_time: "2:00 PM",
+			stay_duration: "3:00",
+		},
+	];
 
 	return (
 		// Important! Always set the container height explicitly
@@ -1063,7 +1284,7 @@ const SimpleMap = (props) => {
 							title="Reset Travel Plan"
 							description="Are you sure to reset this plan? All data will be lost."
 							onConfirm={handleReset}
-							onCancel={console.log("cancel")}
+							onCancel={() => {}}
 							okText="Yes"
 							cancelText="No"
 						>
@@ -1075,6 +1296,42 @@ const SimpleMap = (props) => {
 					</Footer>
 				</Layout>
 			</Layout>
+			<Drawer
+				title={
+					"Optimizing " +
+					props.date[0].add(selectedDate, "day").format("MMM Do") +
+					" Plan With Your Set Duration And Start Place"
+				}
+				width={928}
+				onClose={onCloseDrawer}
+				open={openPlanSelect}
+				bodyStyle={{
+					paddingBottom: 80,
+				}}
+			>
+				<Table
+					columns={columnsPlans}
+					dataSource={efficientPlan}
+					pagination={false}
+					title={() => "Most Efficient Plan"}
+					footer={() => (
+						<Button type="primary" onClick={saveEfficientPlan}>
+							Save This Travel Plan!
+						</Button>
+					)}
+				/>
+				<Table
+					columns={columnsPlans}
+					dataSource={morePalcesPlan}
+					pagination={false}
+					title={() => "Most Places Visiting Plan"}
+					footer={() => (
+						<Button type="primary" onClick={saveMorePalcesPlan}>
+							Save This Travel Plan!
+						</Button>
+					)}
+				/>
+			</Drawer>
 		</div>
 	);
 };
