@@ -28,7 +28,7 @@ import {
 	ScheduleOutlined,
 	SearchOutlined,
 } from "@ant-design/icons";
-// import { buildTripPlan } from "../api";
+// import { buildTripPlan, saveTripPlan } from "../api";
 
 const { Content, Footer, Sider } = Layout;
 const colors = [
@@ -60,20 +60,21 @@ const SimpleMap = (props) => {
 	const [autoInput, setAutoInput] = useState("");
 	const [autoList, setAutoList] = useState([]);
 	const [markers, setMarkers] = useState([]);
-	let infowindow;
+	const infowindow = props.infowindow;
 	const days = props.date[1].diff(props.date[0], "day") + 1;
 	const [plansData, setPlansData] = useState(createPlans(days));
 	const [markerVisible, setMarkerVisible] = useState(createVisible(days));
-	const [recommendation, setRecommendation] = useState(null);
+	const recommendation = props.recommendation;
 	const [recomVisible, setRecomVisible] = useState(false);
-	const [recomMarkers, setRecomMarkers] = useState([]);
+	const recomMarkers = props.recomMarkers;
 	const [openPlanSelect, setOpenPlanSelect] = useState(false);
 	const [selectedDate, setSelectedDate] = useState(-1);
 	const [efficientPlan, setEffientPlan] = useState([]);
 	const [morePalcesPlan, setMorePlacesPlan] = useState([]);
 
-	function log() {
-		console.log(places);
+	function save() {
+		console.log("this is a save function");
+		// saveTripPlan(convert plansData to reqeust body)
 	}
 
 	function createPlans(days) {
@@ -477,26 +478,36 @@ const SimpleMap = (props) => {
 			placesData.push([]);
 		}
 		for (let i = 0; i < places.length; i++) {
-			placesData[1].push({
-				key: i.toString(),
+			while (placesData[1].length < places.length) {
+				placesData[1].push([]);
+			}
+			const index = findIndex(markers, places[i]);
+			placesData[1][index] = {
+				key: index.toString(),
 				place: places[i].name,
 				place_detail: places[i],
-			});
+			};
+			console.log(placesData[1]);
 		}
-		if (recommendation === null) {
-			createRecommendation();
-		}
+
 		if (recommendation !== null) {
+			while (placesData[0].length < recommendation.length) {
+				placesData[0].push([]);
+			}
 			for (let i = 0; i < recommendation.length; i++) {
-				if (i === 20) {
-					break;
-				}
-				placesData[0].push({
-					key: i.toString(),
+				const index = findIndex(recomMarkers, recommendation[i]);
+				placesData[0][index] = {
+					key: index.toString(),
 					place: recommendation[i].name,
 					place_detail: recommendation[i],
+				};
+				recomMarkers[i].addListener("click", () => {
+					infowindow.close();
+					infowindow.setContent(recomMarkers[i].content);
+					infowindow.open(recomMarkers[i].getMap(), recomMarkers[i]);
 				});
 			}
+			console.log(placesData[0]);
 		}
 
 		let inTable = placesData[row.key];
@@ -568,9 +579,12 @@ const SimpleMap = (props) => {
 			),
 		},
 	];
-
-	if (mapApiLoaded) {
-		infowindow = new mapApi.InfoWindow();
+	function findIndex(markerList, target) {
+		for (let i = 0; i < markerList.length; i++) {
+			if (markerList[i].title === target.name) {
+				return i;
+			}
+		}
 	}
 
 	const defaultProps = {
@@ -621,11 +635,9 @@ const SimpleMap = (props) => {
 				) {
 					console.log(results);
 					setPlaces([]);
-					for (let i = 0; i < results.length; i++) {
-						detailsSearch(results[i].place_id, 0);
-					}
 					deleteMarkers();
 					for (let i = 0; i < results.length; i++) {
+						detailsSearch(results[i].place_id);
 						createMarker(results[i], i, mapInstance);
 					}
 					return;
@@ -671,7 +683,6 @@ const SimpleMap = (props) => {
 			label: `${i + 1}`,
 			optimized: false,
 			content: contentString,
-			background: "#FBBC04",
 		});
 
 		setMarkers((markers) => [...markers, marker]);
@@ -840,11 +851,9 @@ const SimpleMap = (props) => {
 				) {
 					console.log(results);
 					setPlaces([]);
-					for (let i = 0; i < results.length; i++) {
-						detailsSearch(results[i].place_id, 0);
-					}
 					deleteMarkers();
 					for (let i = 0; i < results.length; i++) {
+						detailsSearch(results[i].place_id);
 						createMarker(results[i], i, mapInstance);
 					}
 					return;
@@ -855,7 +864,7 @@ const SimpleMap = (props) => {
 		}
 	};
 
-	const detailsSearch = (id, index) => {
+	const detailsSearch = (id) => {
 		if (mapApiLoaded) {
 			const service = new mapApi.places.PlacesService(mapInstance);
 
@@ -877,15 +886,7 @@ const SimpleMap = (props) => {
 					place.geometry &&
 					place.geometry.location
 				) {
-					if (index === 0) {
-						setPlaces((places) => [...places, place]);
-					}
-					if (index === 1) {
-						setRecommendation((recommendation) => [
-							...recommendation,
-							place,
-						]);
-					}
+					setPlaces((places) => [...places, place]);
 					return;
 				}
 				console.log("error");
@@ -900,83 +901,6 @@ const SimpleMap = (props) => {
 		});
 	};
 
-	const createRecommendation = () => {
-		if (mapApiLoaded) {
-			const service = new mapApi.places.PlacesService(mapInstance);
-
-			const request = {
-				location: { lat: props.initCity.lat, lng: props.initCity.lng },
-				radius: 30000,
-				keyword: "famous travel spot",
-				rankBy: mapApi.places.RankBy.PROMINENCE,
-			};
-
-			service.nearbySearch(request, (results, status) => {
-				if (
-					status === mapApi.places.PlacesServiceStatus.OK &&
-					results
-				) {
-					setRecommendation([]);
-					for (let i = 0; i < results.length; i++) {
-						detailsSearch(results[i].place_id, 1);
-					}
-					deleteRecomMarkers();
-					for (let i = 0; i < results.length; i++) {
-						createRecomMarker(results[i], i, mapInstance);
-					}
-					return;
-				}
-				console.log("No Recommendation");
-			});
-		}
-	};
-	function createRecomMarker(place, i, map) {
-		if (!place.geometry || !place.geometry.location) return;
-
-		let photos = place.photos;
-		let contentString;
-
-		contentString =
-			photos !== undefined
-				? '<div id="content">' +
-				  '<h1 id="firstHeading" class="firstHeading">' +
-				  place.name +
-				  "</h1>" +
-				  '<div id="bodyContent">' +
-				  '<img src="' +
-				  photos[0].getUrl({ maxWidth: 500, maxHeight: 500 }) +
-				  '" alt="" width="500" height="500">' +
-				  "</div>" +
-				  "</div>"
-				: '<div id="content">' +
-				  '<h1 id="firstHeading" class="firstHeading">' +
-				  place.name +
-				  "</h1>" +
-				  '<div id="bodyContent">' +
-				  '<h1 id="secondHeading" class="secondHeading">' +
-				  "NO IMAGE AVAILABLE" +
-				  "</h1>" +
-				  "</div>" +
-				  "</div>";
-
-		const marker = new mapApi.Marker({
-			position: place.geometry.location,
-			map: null,
-			title: place.name,
-			label: `${i + 1}`,
-			optimized: false,
-			content: contentString,
-		});
-
-		setRecomMarkers((markers) => [...markers, marker]);
-
-		marker.addListener("click", () => {
-			infowindow.close();
-			infowindow.setContent(marker.content);
-			infowindow.open(marker.getMap(), marker);
-		});
-	}
-
 	function showRecommendation() {
 		for (let i = 0; i < recomMarkers.length; i++) {
 			recomMarkers[i].setMap(mapInstance);
@@ -986,10 +910,6 @@ const SimpleMap = (props) => {
 		for (let i = 0; i < recomMarkers.length; i++) {
 			recomMarkers[i].setMap(null);
 		}
-	}
-	function deleteRecomMarkers() {
-		hideRecommendation();
-		setRecomMarkers([]);
 	}
 
 	const showPlanDrawer = (day) => {
@@ -1026,7 +946,7 @@ const SimpleMap = (props) => {
 			};
 		}
 		setEffientPlan(dataPlans);
-		// uncomment below and delete above when backend api is working
+		// uncomment below and delete above set line when backend api is working
 		// const result = buildTripPlan(request);
 		// const ePlan = [];
 		// ePlan.push({
@@ -1290,7 +1210,7 @@ const SimpleMap = (props) => {
 						>
 							<Button type="primary">Reset Travel Plan</Button>
 						</Popconfirm>
-						<Button type="primary" onClick={log}>
+						<Button type="primary" onClick={save}>
 							Save This Travel Plan!
 						</Button>
 					</Footer>

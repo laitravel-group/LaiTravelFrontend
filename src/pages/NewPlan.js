@@ -19,6 +19,9 @@ export default function NewPlan() {
 	const [date, setDate] = useState(null);
 	const [tabKey, setTabKey] = useState({ reset: false });
 	const [key, setKey] = useState(tabKeys.InitSearch);
+	const [recommendation, setRecommendation] = useState(null);
+	const [recomMarkers, setRecomMarkers] = useState([]);
+	const [infowindow, setInfowindow] = useState(null);
 
 	useEffect(() => {
 		if (startCity.lat !== 0 && startCity.lng !== 0) {
@@ -52,6 +55,10 @@ export default function NewPlan() {
 							setStartCity={setStartCity}
 							date={date}
 							setDate={setDate}
+							setRecommendation={setRecommendation}
+							recomMarkers={recomMarkers}
+							setRecomMarkers={setRecomMarkers}
+							setInfowindow={setInfowindow}
 						/>
 					</TabPane>
 					<TabPane tab="TravelPlanner" key={tabKeys.TravelPlanner}>
@@ -59,6 +66,9 @@ export default function NewPlan() {
 							initCity={startCity}
 							date={date}
 							reset={setTabKey}
+							recommendation={recommendation}
+							recomMarkers={recomMarkers}
+							infowindow={infowindow}
 						/>
 					</TabPane>
 				</Tabs>

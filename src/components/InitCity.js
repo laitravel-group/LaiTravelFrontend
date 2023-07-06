@@ -60,10 +60,7 @@ const InitCity = (props) => {
 					status === mapApi.places.PlacesServiceStatus.OK &&
 					results
 				) {
-					props.setStartCity({
-						lat: results[0].geometry.location.lat(),
-						lng: results[0].geometry.location.lng(),
-					});
+					createRecommendation(results[0]);
 					console.log(results);
 					return;
 				}
@@ -78,6 +75,122 @@ const InitCity = (props) => {
 			description: "Please enter a valid City name and/or Date range!",
 		});
 	};
+
+	const createRecommendation = (place) => {
+		if (mapApiLoaded) {
+			const service = new mapApi.places.PlacesService(mapInstance);
+
+			const request = {
+				location: {
+					lat: place.geometry.location.lat(),
+					lng: place.geometry.location.lng(),
+				},
+				radius: 30000,
+				keyword: "famous travel spot",
+				rankBy: mapApi.places.RankBy.PROMINENCE,
+			};
+
+			service.nearbySearch(request, (results, status) => {
+				if (
+					status === mapApi.places.PlacesServiceStatus.OK &&
+					results
+				) {
+					props.setRecommendation([]);
+					deleteRecomMarkers();
+					for (let i = 0; i < results.length; i++) {
+						detailsSearch(results[i].place_id);
+						createRecomMarker(results[i], i);
+					}
+					const infowindow = new mapApi.InfoWindow();
+					props.setInfowindow(infowindow);
+					props.setStartCity({
+						lat: place.geometry.location.lat(),
+						lng: place.geometry.location.lng(),
+					});
+					return;
+				}
+				console.log("No Recommendation");
+			});
+		}
+	};
+	const detailsSearch = (id) => {
+		if (mapApiLoaded) {
+			const service = new mapApi.places.PlacesService(mapInstance);
+
+			const request = {
+				placeId: id,
+				fields: [
+					"name",
+					"opening_hours",
+					"place_id",
+					"geometry",
+					"photos",
+				],
+			};
+
+			service.getDetails(request, (place, status) => {
+				if (
+					status === mapApi.places.PlacesServiceStatus.OK &&
+					place &&
+					place.geometry &&
+					place.geometry.location
+				) {
+					props.setRecommendation((recommendation) => [
+						...recommendation,
+						place,
+					]);
+					return;
+				}
+				console.log("error");
+			});
+		}
+	};
+	function deleteRecomMarkers() {
+		for (let i = 0; i < props.recomMarkers.length; i++) {
+			props.recomMarkers[i].setMap(null);
+		}
+		props.setRecomMarkers([]);
+	}
+	function createRecomMarker(place, i) {
+		if (!place.geometry || !place.geometry.location) return;
+
+		let photos = place.photos;
+		let contentString;
+
+		contentString =
+			photos !== undefined
+				? '<div id="content">' +
+				  '<h1 id="firstHeading" class="firstHeading">' +
+				  place.name +
+				  "</h1>" +
+				  '<div id="bodyContent">' +
+				  '<img src="' +
+				  photos[0].getUrl({ maxWidth: 500, maxHeight: 500 }) +
+				  '" alt="" width="500" height="500">' +
+				  "</div>" +
+				  "</div>"
+				: '<div id="content">' +
+				  '<h1 id="firstHeading" class="firstHeading">' +
+				  place.name +
+				  "</h1>" +
+				  '<div id="bodyContent">' +
+				  '<h1 id="secondHeading" class="secondHeading">' +
+				  "NO IMAGE AVAILABLE" +
+				  "</h1>" +
+				  "</div>" +
+				  "</div>";
+
+		const marker = new mapApi.Marker({
+			position: place.geometry.location,
+			map: null,
+			title: place.name,
+			label: `${i + 1}`,
+			optimized: false,
+			content: contentString,
+		});
+
+		props.setRecomMarkers((markers) => [...markers, marker]);
+	}
 
 	return (
 		// Important! Always set the container height explicitly
