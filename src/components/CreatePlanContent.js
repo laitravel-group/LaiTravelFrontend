@@ -487,7 +487,6 @@ const SimpleMap = (props) => {
 				place: places[i].name,
 				place_detail: places[i],
 			};
-			console.log(placesData[1]);
 		}
 
 		if (recommendation !== null) {
@@ -507,7 +506,6 @@ const SimpleMap = (props) => {
 					infowindow.open(recomMarkers[i].getMap(), recomMarkers[i]);
 				});
 			}
-			console.log(placesData[0]);
 		}
 
 		let inTable = placesData[row.key];
@@ -1004,7 +1002,6 @@ const SimpleMap = (props) => {
 			}
 		}
 		for (let i = 0; i < newPlans[selectedDate].length; i++) {
-			console.log(newPlans[selectedDate][i]);
 			newPlans[selectedDate][i].key = i.toString();
 			newPlans[selectedDate][i].marker.label = `${i + 1}`;
 		}
