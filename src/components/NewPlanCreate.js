@@ -4,17 +4,18 @@ import GoogleMap from "google-maps-react-markers";
 import dayjs from "dayjs";
 import { getFormatString } from "../utils";
 import { apiKey } from "../key";
+import { getPlaces } from "../api";
 
 const { Content } = Layout;
 const { RangePicker } = DatePicker;
 
 export default function NewPlanCreate(props) {
-	const { dates, setDates, setCityLocation } = props;
+	const { dates, setDates, setCityLocation, setPlacesData } = props;
 
 	const [mapInstance, setMapInstance] = useState(null);
 	const [mapApi, setMapApi] = useState(null);
 	const [mapApiLoaded, setMapApiLoaded] = useState(false);
-	const [start, setStart] = useState("");
+	const [cityName, setStart] = useState("");
 
 	const [messageApi, contextHolder] = message.useMessage();
 
@@ -38,7 +39,7 @@ export default function NewPlanCreate(props) {
 			const service = new mapApi.places.PlacesService(mapInstance);
 
 			const request = {
-				query: start,
+				query: cityName,
 				fields: [
 					"business_status",
 					"geometry",
@@ -71,6 +72,12 @@ export default function NewPlanCreate(props) {
 					messageApi.error("Please enter a valid city name");
 				}
 			});
+
+			getPlaces(
+				cityName,
+				dates[0].format("YYYY-MM-DD"),
+				dates[1].format("YYYY-MM-DD")
+			).then((data) => setPlacesData(data));
 		} else {
 			messageApi.error(
 				"Error! Failed to load Google Map API, please try again later"
@@ -105,7 +112,6 @@ export default function NewPlanCreate(props) {
 											disabledDate={disabledDate}
 											value={dates}
 											onChange={(dates) => {
-												console.log(dates);
 												setDates(dates);
 											}}
 											placement="bottomLeft"
@@ -115,7 +121,7 @@ export default function NewPlanCreate(props) {
 										<Input
 											style={{ width: "15vw" }}
 											placeholder="Search city"
-											value={start}
+											value={cityName}
 											onChange={(e) =>
 												setStart(e.target.value)
 											}

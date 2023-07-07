@@ -13,13 +13,14 @@ export default function NewPlan() {
 	const [subPage, setSubPage] = useState(propsFromLink?.subPage ?? "search");
 
 	const [cityLocation, setCityLocation] = useState({
-		lat: 0,
-		lng: 0,
+		lat: null,
+		lng: null,
 	});
 	const [dates, setDates] = useState(null);
+	const [placesData, setPlacesData] = useState({});
 
 	useEffect(() => {
-		if (cityLocation.lat !== 0 && cityLocation.lng !== 0) {
+		if (cityLocation.lat !== null && cityLocation.lng !== null) {
 			setSubPage("plan");
 		} else {
 			setSubPage("search");
@@ -35,13 +36,18 @@ export default function NewPlan() {
 							setCityLocation={setCityLocation}
 							dates={dates}
 							setDates={setDates}
+							setPlacesData={setPlacesData}
 						/>
 					</Content>
 				</>
 			)}
 
 			{subPage === "plan" && (
-				<NewPlanBuild cityLocation={cityLocation} dates={dates} />
+				<NewPlanBuild
+					cityLocation={cityLocation}
+					dates={dates}
+					placesData={placesData}
+				/>
 			)}
 		</Layout>
 	);

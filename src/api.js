@@ -1,167 +1,190 @@
-const domain = "";
+const domain = "http://localhost:8080";
 const google_api_key = "AIzaSyC2CxkBl9JyAPvO0lAKDrvBHw4oURSCXFI";
 
 // auth
-export const signup = async (credentials) => {
+export const signup = (credentials) => {
 	const url = `${domain}/signup`;
-	const res = await fetch(url, {
+	return fetch(url, {
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
 		},
 		body: JSON.stringify(credentials),
-	});
-	handleResponseStatus(res, `Failed to register: ${res.text}`);
-};
-
-export const login = async (credentials) => {
-	const url = `${domain}/login`;
-	const res = await fetch(url, {
-		method: "POST",
-		headers: {
-			"Content-Type": "application/json",
-		},
-		body: JSON.stringify(credentials),
-	});
-	handleResponseStatus(
-		res,
-		"Failed to log in: incorrect username or password"
+	}).then((res) =>
+		handleResponseStatus(res, `Failed to register: ${res.text}`)
 	);
-	const token = await res.text();
-	localStorage.setItem("authToken", token);
 };
 
-export const logout = async () => {
+export const login = (credentials) => {
+	const url = `${domain}/login`;
+	return fetch(url, {
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json",
+		},
+		body: JSON.stringify(credentials),
+	}).then((res) => {
+		handleResponseStatus(
+			res,
+			"Failed to log in: incorrect username or password"
+		);
+		const token = res.text();
+		localStorage.setItem("authToken", token);
+	});
+};
+
+export const logout = () => {
 	const url = `${domain}/logout`;
-	const res = await fetch(url, {
+	return fetch(url, {
 		method: "POST",
 		credentials: "include",
-	});
-	handleResponseStatus(res, "Failed to log out");
+	}).then((res) => handleResponseStatus(res, "Failed to log out"));
 };
 
 // user
-export const getUser = async () => {
+export const getUser = () => {
 	const url = `${domain}/user`;
 	const authToken = localStorage.getItem("authToken");
-	const res = await fetch(url, {
+	return fetch(url, {
 		headers: {
 			Authorization: `Bearer ${authToken}`,
 		},
+	}).then((res) => {
+		handleResponseStatus(
+			res,
+			"Something went wrong when getting your information"
+		);
+		return res.json();
 	});
-	handleResponseStatus(
-		res,
-		"Something went wrong when getting your information"
-	);
-	return await res.json();
 };
 
-export const userEdit = async (credentials) => {
+export const userEdit = (credentials) => {
 	const url = `${domain}/user-edit`;
 	const authToken = localStorage.getItem("authToken");
-	const res = await fetch(url, {
+	return fetch(url, {
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
 			Authorization: `Bearer ${authToken}`,
 		},
 		body: JSON.stringify(credentials),
-	});
-	handleResponseStatus(res, "Failed to update your information");
+	}).then((res) =>
+		handleResponseStatus(res, "Failed to update your information")
+	);
 };
 
 // place
-export const getPlaces = async (city, startDate, endDate) => {
+export const getPlaces = (city, startDate, endDate) => {
 	const url = `${domain}/places?city=${city}&startDate=${startDate}&endDate=${endDate}`;
-	const res = await fetch(url);
-	handleResponseStatus(res, `Failed to get places: ${res.text()}`);
-	return await res.json();
+	return fetch(url).then((res) => {
+		handleResponseStatus(res, `Failed to get places`);
+		return res.json();
+	});
 };
 
-export const getPlaceDetails = async (placeId) => {
+export const getPlaceDetails = (placeId) => {
 	const url = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&key=${google_api_key}`;
-	const res = await fetch(url);
-	handleResponseStatus(res, `Failed to get place details: ${res.text}`);
-	return await res.json();
+	return fetch(url).then((res) => {
+		handleResponseStatus(res, `Failed to get place details`);
+		return res.json();
+	});
 };
 
 // trip plans
-export const getTripPlanList = async () => {
+export const getTripPlanList = () => {
 	const url = `${domain}/trip-plans`;
 	const authToken = localStorage.getItem("authToken");
-	const res = await fetch(url, {
+	return fetch(url, {
 		headers: {
 			Authorization: `Bearer ${authToken}`,
 		},
+	}).then((res) => {
+		handleResponseStatus(res, `Failed to get trip plan list: ${res.text}`);
+		return res.json();
 	});
-	handleResponseStatus(res, `Failed to get trip plan list: ${res.text}`);
-	return await res.json();
 };
 
-export const getTripPlanDetails = async (tripId) => {
+export const getTripPlanDetails = (tripId) => {
 	const url = `${domain}/trip-plan-details?tripId=${tripId}`;
 	const authToken = localStorage.getItem("authToken");
-	const res = await fetch(url, {
+	return fetch(url, {
 		headers: {
 			Authorization: `Bearer ${authToken}`,
 		},
+	}).then((res) => {
+		handleResponseStatus(
+			res,
+			`Failed to get trip plan details: ${res.text}`
+		);
+		return res.json();
 	});
-	handleResponseStatus(res, `Failed to get trip plan details: ${res.text}`);
-	return await res.json();
 };
 
 export const deleteTripPlan = async (tripId) => {
 	const url = `${domain}/trip-plans`;
 	const authToken = localStorage.getItem("authToken");
-	const res = await fetch(url, {
+	return fetch(url, {
 		method: "DELETE",
 		headers: {
 			Authorization: `Bearer ${authToken}`,
 		},
+	}).then((res) => {
+		handleResponseStatus(
+			res,
+			`Failed to delete the trip plan: ${res.text}`
+		);
+		return res.json();
 	});
-	handleResponseStatus(res, `Failed to delete the trip plan: ${res.text}`);
-	return await res.json();
 };
 
-export const buildTripPlan = async (desiredPlan) => {
+export const buildTripPlan = (desiredPlan) => {
 	const url = `${domain}/trip-plan-build`;
-	const res = await fetch(url, {
+	return fetch(url, {
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
 		},
 		body: JSON.stringify(desiredPlan),
+	}).then((res) => {
+		handleResponseStatus(
+			res,
+			`Failed to generate a trip plan: ${res.text}`
+		);
+		return res.json();
 	});
-	handleResponseStatus(res, `Failed to generate a trip plan: ${res.text}`);
-	return await res.json();
 };
 
-export const buildUpdateTripPlan = async (updatedPlan) => {
+export const buildUpdateTripPlan = (updatedPlan) => {
 	const url = `${domain}/trip-plan-build-update`;
-	const res = await fetch(url, {
+	return fetch(url, {
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
 		},
 		body: JSON.stringify(updatedPlan),
+	}).then((res) => {
+		handleResponseStatus(
+			res,
+			`Failed to update the trip plan: ${res.text}`
+		);
+		return res.json();
 	});
-	handleResponseStatus(res, `Failed to update the trip plan: ${res.text}`);
-	return await res.json();
 };
 
-export const saveTripPlan = async (data) => {
+export const saveTripPlan = (data) => {
 	const url = `${domain}/trip-plans-save`;
 	const authToken = localStorage.getItem("authToken");
-	const res = await fetch(url, {
+	return fetch(url, {
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
 			Authorization: `Bearer ${authToken}`,
 		},
 		body: JSON.stringify(data),
+	}).then((res) => {
+		handleResponseStatus(res, `Failed to save the trip plan: ${res.text}`);
+		return res.json();
 	});
-	handleResponseStatus(res, `Failed to save the trip plan: ${res.text}`);
-	return await res.json();
 };
 
 // helper
