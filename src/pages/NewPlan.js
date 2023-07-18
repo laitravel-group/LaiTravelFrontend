@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Layout, Tabs } from "antd";
 import PageHeader from "../components/PageHeader";
-import SimpleMap from "../components/CreatePlanContent";
+import CreatePlanContent from "../components/CreatePlanContent";
 import InitCity from "../components/InitCity";
 
 const { Content } = Layout;
@@ -62,7 +62,7 @@ export default function NewPlan() {
 						/>
 					</TabPane>
 					<TabPane tab="TravelPlanner" key={tabKeys.TravelPlanner}>
-						<SimpleMap
+						<CreatePlanContent
 							initCity={startCity}
 							date={date}
 							reset={setTabKey}

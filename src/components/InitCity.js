@@ -97,10 +97,15 @@ const InitCity = (props) => {
 				) {
 					props.setRecommendation([]);
 					deleteRecomMarkers();
+					const list = [];
 					for (let i = 0; i < results.length; i++) {
-						detailsSearch(results[i].place_id);
+						list.push([]);
+					}
+					for (let i = 0; i < results.length; i++) {
+						detailsSearch(results[i].place_id, list, i);
 						createRecomMarker(results[i], i);
 					}
+					props.setRecommendation(list);
 					const infowindow = new mapApi.InfoWindow();
 					props.setInfowindow(infowindow);
 					props.setStartCity({
@@ -113,7 +118,7 @@ const InitCity = (props) => {
 			});
 		}
 	};
-	const detailsSearch = (id) => {
+	const detailsSearch = (id, list, i) => {
 		if (mapApiLoaded) {
 			const service = new mapApi.places.PlacesService(mapInstance);
 
@@ -135,10 +140,7 @@ const InitCity = (props) => {
 					place.geometry &&
 					place.geometry.location
 				) {
-					props.setRecommendation((recommendation) => [
-						...recommendation,
-						place,
-					]);
+					list[i] = place;
 					return;
 				}
 				console.log("error");
@@ -204,6 +206,15 @@ const InitCity = (props) => {
 					width: "100%",
 				}}
 			>
+				<div
+					style={{
+						marginLeft: "8%",
+						fontSize: "40px",
+						fontWeight: "bolder",
+					}}
+				>
+					Plan a new trip
+				</div>
 				<Space direction="vertical" size={12}>
 					<RangePicker
 						value={props.date}
@@ -212,7 +223,7 @@ const InitCity = (props) => {
 				</Space>
 				<Input
 					style={{ width: "15vw" }}
-					placeholder="Search city"
+					placeholder="Where to?"
 					value={start}
 					onChange={(e) => setStart(e.target.value)}
 					onPressEnter={() => findCity()}

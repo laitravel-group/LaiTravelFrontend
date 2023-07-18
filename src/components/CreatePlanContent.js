@@ -47,7 +47,7 @@ const colors = [
 	"gold",
 ];
 
-const SimpleMap = (props) => {
+const CreatePlanContent = (props) => {
 	const [myPosition, setMyPosition] = useState({
 		lat: props.initCity.lat,
 		lng: props.initCity.lng,
@@ -94,17 +94,21 @@ const SimpleMap = (props) => {
 		return list;
 	}
 
-	const items1 = [];
-	for (let i = 0; i < days; i++) {
-		items1.push({
-			key: i.toString(),
-			label: (
-				<span>
-					<CalendarOutlined />{" "}
-					{[props.date[0].add(i, "day").format("MMM Do")]}
-				</span>
-			),
-		});
+	const items1 = createDayList();
+	function createDayList() {
+		const list = [];
+		for (let i = 0; i < days; i++) {
+			list.push({
+				key: i.toString(),
+				label: (
+					<span>
+						<CalendarOutlined />{" "}
+						{[props.date[0].add(i, "day").format("MMM Do")]}
+					</span>
+				),
+			});
+		}
+		return list;
 	}
 	const items2 = [
 		{
@@ -171,159 +175,17 @@ const SimpleMap = (props) => {
 			{
 				title: "Start Time",
 				key: "start_time",
-				render: (record) => {
-					return (
-						<Space style={{ width: 100 }}>
-							<TimePicker
-								style={{ width: 100 }}
-								format="h:mm A"
-								allowClear={false}
-								showNow={false}
-								value={record.time}
-								onChange={(e) => {
-									hideAllMarkers(plansData);
-									const newPlans = cloneDeep(plansData);
-									newPlans[row.key][record.key].time = e;
-									setPlansData(newPlans);
-								}}
-							/>
-						</Space>
-					);
-				},
+				render: (record) => startTimeRender(row, record),
 			},
 			{
 				title: "Duration",
 				key: "stay_duration",
-				render: (record) => {
-					return (
-						<Space style={{ width: 80 }}>
-							<TimePicker
-								style={{ width: 80 }}
-								format="H:mm"
-								allowClear={false}
-								showNow={false}
-								value={record.duration}
-								onChange={(e) => {
-									hideAllMarkers(plansData);
-									const newPlans = cloneDeep(plansData);
-									newPlans[row.key][record.key].duration = e;
-									setPlansData(newPlans);
-								}}
-							/>
-						</Space>
-					);
-				},
+				render: (record) => durationRender(row, record),
 			},
 			{
 				title: "Action",
 				key: "operation",
-				render: (record) => {
-					return (
-						<Space style={{ width: 165 }}>
-							<Dropdown
-								menu={{
-									items: items2,
-									onClick: (e) => {
-										if (e.key === "1") {
-											hideAllMarkers(plansData);
-											const newPlans =
-												cloneDeep(plansData);
-											const moving = newPlans[
-												row.key
-											].splice(record.key, 1);
-											newPlans[row.key].unshift(
-												moving[0]
-											);
-											for (
-												let i = 0;
-												i < newPlans[row.key].length;
-												i++
-											) {
-												newPlans[row.key][i].key =
-													i.toString();
-												newPlans[row.key][
-													i
-												].marker.label = `${i + 1}`;
-											}
-											setPlansData(newPlans);
-										}
-										if (e.key === "2") {
-											openInfoWindow(
-												parseInt(row.key),
-												parseInt(record.key)
-											);
-										}
-										if (e.key === "3") {
-											hideAllMarkers(plansData);
-											const newPlans =
-												cloneDeep(plansData);
-											newPlans[row.key].splice(
-												record.key,
-												1
-											);
-											for (
-												let i = 0;
-												i < newPlans[row.key].length;
-												i++
-											) {
-												newPlans[row.key][i].key =
-													i.toString();
-												newPlans[row.key][
-													i
-												].marker.label = `${i + 1}`;
-											}
-											setPlansData(newPlans);
-										}
-									},
-								}}
-							>
-								<span>
-									Options <DownOutlined />
-								</span>
-							</Dropdown>
-							<Dropdown
-								menu={{
-									items: items1,
-									onClick: (e) => {
-										hideAllMarkers(plansData);
-										const newPlans = cloneDeep(plansData);
-										const moving =
-											newPlans[row.key][record.key];
-										newPlans[row.key].splice(record.key, 1);
-										newPlans[e.key].push(moving);
-										for (
-											let i = 0;
-											i < newPlans[row.key].length;
-											i++
-										) {
-											newPlans[row.key][i].key =
-												i.toString();
-											newPlans[row.key][
-												i
-											].marker.label = `${i + 1}`;
-										}
-										for (
-											let i = 0;
-											i < newPlans[e.key].length;
-											i++
-										) {
-											newPlans[e.key][i].key =
-												i.toString();
-											newPlans[e.key][
-												i
-											].marker.label = `${i + 1}`;
-										}
-										setPlansData(newPlans);
-									},
-								}}
-							>
-								<span onClick={(e) => e.preventDefault()}>
-									Move to <DownOutlined />
-								</span>
-							</Dropdown>
-						</Space>
-					);
-				},
+				render: (record) => plansDataAct(row, record),
 			},
 		];
 
@@ -332,6 +194,112 @@ const SimpleMap = (props) => {
 			<Table columns={columns} dataSource={inTable} pagination={false} />
 		);
 	};
+	function startTimeRender(row, record) {
+		return (
+			<Space style={{ width: 105 }}>
+				<TimePicker
+					style={{ width: 105 }}
+					format="h:mm A"
+					allowClear={false}
+					showNow={false}
+					value={record.time}
+					onChange={(e) => {
+						hideAllMarkers(plansData);
+						const newPlans = cloneDeep(plansData);
+						newPlans[row.key][record.key].time = e;
+						setPlansData(newPlans);
+					}}
+				/>
+			</Space>
+		);
+	}
+	function durationRender(row, record) {
+		return (
+			<Space style={{ width: 80 }}>
+				<TimePicker
+					style={{ width: 80 }}
+					format="H:mm"
+					allowClear={false}
+					showNow={false}
+					value={record.duration}
+					onChange={(e) => {
+						hideAllMarkers(plansData);
+						const newPlans = cloneDeep(plansData);
+						newPlans[row.key][record.key].duration = e;
+						setPlansData(newPlans);
+					}}
+				/>
+			</Space>
+		);
+	}
+	function plansDataAct(row, record) {
+		return (
+			<Space style={{ width: 165 }}>
+				<Dropdown
+					menu={{
+						items: items2,
+						onClick: (e) => optionsClick(row, record, e),
+					}}
+				>
+					<span>
+						Options <DownOutlined />
+					</span>
+				</Dropdown>
+				<Dropdown
+					menu={{
+						items: items1,
+						onClick: (e) => plansDataMove(row, record, e),
+					}}
+				>
+					<span onClick={(e) => e.preventDefault()}>
+						Move to <DownOutlined />
+					</span>
+				</Dropdown>
+			</Space>
+		);
+	}
+	function optionsClick(row, record, e) {
+		if (e.key === "1") {
+			hideAllMarkers(plansData);
+			const newPlans = cloneDeep(plansData);
+			const moving = newPlans[row.key].splice(record.key, 1);
+			newPlans[row.key].unshift(moving[0]);
+			for (let i = 0; i < newPlans[row.key].length; i++) {
+				newPlans[row.key][i].key = i.toString();
+				newPlans[row.key][i].marker.label = `${i + 1}`;
+			}
+			setPlansData(newPlans);
+		}
+		if (e.key === "2") {
+			openInfoWindow(parseInt(row.key), parseInt(record.key));
+		}
+		if (e.key === "3") {
+			hideAllMarkers(plansData);
+			const newPlans = cloneDeep(plansData);
+			newPlans[row.key].splice(record.key, 1);
+			for (let i = 0; i < newPlans[row.key].length; i++) {
+				newPlans[row.key][i].key = i.toString();
+				newPlans[row.key][i].marker.label = `${i + 1}`;
+			}
+			setPlansData(newPlans);
+		}
+	}
+	function plansDataMove(row, record, e) {
+		hideAllMarkers(plansData);
+		const newPlans = cloneDeep(plansData);
+		const moving = newPlans[row.key][record.key];
+		newPlans[row.key].splice(record.key, 1);
+		newPlans[e.key].push(moving);
+		for (let i = 0; i < newPlans[row.key].length; i++) {
+			newPlans[row.key][i].key = i.toString();
+			newPlans[row.key][i].marker.label = `${i + 1}`;
+		}
+		for (let i = 0; i < newPlans[e.key].length; i++) {
+			newPlans[e.key][i].key = i.toString();
+			newPlans[e.key][i].marker.label = `${i + 1}`;
+		}
+		setPlansData(newPlans);
+	}
 	const columns = [
 		{
 			title: "Date",
@@ -341,44 +309,44 @@ const SimpleMap = (props) => {
 		{
 			title: "Action",
 			key: "operation",
-			render: (record) => {
-				return (
-					<Space size="middle">
-						<Dropdown
-							menu={{
-								items: items3,
-								onClick: (e) => {
-									const newList = cloneDeep(markerVisible);
-									if (e.key === "1") {
-										newList[
-											parseInt(record.key) + 1
-										] = true;
-										showMarkersInPlan(parseInt(record.key));
-										createListener(parseInt(record.key));
-									} else if (e.key === "2") {
-										newList[
-											parseInt(record.key) + 1
-										] = false;
-										hideMarkersInPlan(parseInt(record.key));
-									}
-									setMarkerVisible(newList);
-								},
-							}}
-						>
-							<span onClick={(e) => e.preventDefault()}>
-								Pins on map <DownOutlined />
-							</span>
-						</Dropdown>
-						<Typography.Link
-							onClick={() => showPlanDrawer(parseInt(record.key))}
-						>
-							Arrange schedule for today <ScheduleOutlined />
-						</Typography.Link>
-					</Space>
-				);
-			},
+			render: (record) => plansAct(record),
 		},
 	];
+	function plansAct(record) {
+		return (
+			<Space size="middle">
+				<Dropdown
+					menu={{
+						items: items3,
+						onClick: (e) => plansMarkerClick(record, e),
+					}}
+				>
+					<span onClick={(e) => e.preventDefault()}>
+						Pins on map <DownOutlined />
+					</span>
+				</Dropdown>
+				<Typography.Link
+					onClick={() => showPlanDrawer(parseInt(record.key))}
+				>
+					Arrange schedule for today <ScheduleOutlined />
+				</Typography.Link>
+			</Space>
+		);
+	}
+	function plansMarkerClick(record, e) {
+		const newList = cloneDeep(markerVisible);
+		hideRecommendation();
+		hideMarkers();
+		if (e.key === "1") {
+			newList[parseInt(record.key) + 1] = true;
+			showMarkersInPlan(parseInt(record.key));
+			createListener(parseInt(record.key));
+		} else if (e.key === "2") {
+			newList[parseInt(record.key) + 1] = false;
+			hideMarkersInPlan(parseInt(record.key));
+		}
+		setMarkerVisible(newList);
+	}
 	const data = [];
 	for (let i = 0; i < days; ++i) {
 		data.push({
@@ -402,74 +370,7 @@ const SimpleMap = (props) => {
 			{
 				title: "Action",
 				key: "operation",
-				render: (record) => {
-					return (
-						<Space style={{ width: 195 }}>
-							<Typography.Link
-								onClick={() =>
-									openSearchInfoWindow(
-										parseInt(row.key),
-										parseInt(record.key)
-									)
-								}
-							>
-								Open on map
-							</Typography.Link>
-							<span> </span>
-							<Dropdown
-								menu={{
-									items: items1,
-									onClick: (e) => {
-										hideAllMarkers(plansData);
-										hideMarkers();
-										hideRecommendation();
-										const newPlans = cloneDeep(plansData);
-										const moving =
-											placesData[row.key][record.key];
-										moving.time = props.date[0]
-											.hour(8)
-											.minute(0);
-										moving.duration = props.date[0]
-											.hour(3)
-											.minute(0);
-										moving.marker = cloneDeep(
-											parseInt(row.key) === 0
-												? recomMarkers[record.key]
-												: markers[record.key]
-										);
-										moving.marker.setMap(null);
-										newPlans[e.key].push(moving);
-										for (
-											let i = 0;
-											i < newPlans[e.key].length;
-											i++
-										) {
-											newPlans[e.key][i].key =
-												i.toString();
-											newPlans[e.key][
-												i
-											].marker.label = `${i + 1}`;
-											newPlans[e.key][i].marker.setMap(
-												mapInstance
-											);
-										}
-										if (markerVisible[0] === true) {
-											showMarkers();
-										}
-										if (recomVisible === true) {
-											showRecommendation();
-										}
-										setPlansData(newPlans);
-									},
-								}}
-							>
-								<span onClick={(e) => e.preventDefault()}>
-									Move to <DownOutlined />
-								</span>
-							</Dropdown>
-						</Space>
-					);
-				},
+				render: (record) => searchAct(record, row),
 			},
 		];
 		const placesData = [];
@@ -478,28 +379,20 @@ const SimpleMap = (props) => {
 			placesData.push([]);
 		}
 		for (let i = 0; i < places.length; i++) {
-			while (placesData[1].length < places.length) {
-				placesData[1].push([]);
-			}
-			const index = findIndex(markers, places[i]);
-			placesData[1][index] = {
-				key: index.toString(),
+			placesData[1].push({
+				key: i.toString(),
 				place: places[i].name,
 				place_detail: places[i],
-			};
+			});
 		}
 
 		if (recommendation !== null) {
-			while (placesData[0].length < recommendation.length) {
-				placesData[0].push([]);
-			}
 			for (let i = 0; i < recommendation.length; i++) {
-				const index = findIndex(recomMarkers, recommendation[i]);
-				placesData[0][index] = {
-					key: index.toString(),
+				placesData[0].push({
+					key: i.toString(),
 					place: recommendation[i].name,
 					place_detail: recommendation[i],
-				};
+				});
 				recomMarkers[i].addListener("click", () => {
 					infowindow.close();
 					infowindow.setContent(recomMarkers[i].content);
@@ -512,6 +405,61 @@ const SimpleMap = (props) => {
 		return (
 			<Table columns={columns} dataSource={inTable} pagination={false} />
 		);
+		function searchAct(record, row) {
+			return (
+				<Space style={{ width: 195 }}>
+					<Typography.Link
+						onClick={() =>
+							openSearchInfoWindow(
+								parseInt(row.key),
+								parseInt(record.key)
+							)
+						}
+					>
+						Open on map
+					</Typography.Link>
+					<span> </span>
+					<Dropdown
+						menu={{
+							items: items1,
+							onClick: (e) => moveSearch(record, row, e),
+						}}
+					>
+						<span onClick={(e) => e.preventDefault()}>
+							Move to <DownOutlined />
+						</span>
+					</Dropdown>
+				</Space>
+			);
+		}
+		function moveSearch(record, row, e) {
+			hideAllMarkers(plansData);
+			hideMarkers();
+			hideRecommendation();
+			const newPlans = cloneDeep(plansData);
+			const moving = placesData[row.key][record.key];
+			moving.time = props.date[0].hour(8).minute(0);
+			moving.duration = props.date[0].hour(3).minute(0);
+			moving.marker = cloneDeep(
+				parseInt(row.key) === 0
+					? recomMarkers[record.key]
+					: markers[record.key]
+			);
+			moving.marker.setMap(null);
+			newPlans[e.key].push(moving);
+			for (let i = 0; i < newPlans[e.key].length; i++) {
+				newPlans[e.key][i].key = i.toString();
+				newPlans[e.key][i].marker.label = `${i + 1}`;
+				newPlans[e.key][i].marker.setMap(mapInstance);
+			}
+			if (markerVisible[0] === true) {
+				showMarkers();
+			}
+			if (recomVisible === true) {
+				showRecommendation();
+			}
+			setPlansData(newPlans);
+		}
 	};
 	const columnsSearch = [
 		{
@@ -522,43 +470,48 @@ const SimpleMap = (props) => {
 		{
 			title: "Action",
 			key: "operation",
-			render: (record) => (
-				<Space size="middle">
-					<Dropdown
-						menu={{
-							items: items3,
-							onClick: (e) => {
-								if (record.key === "0") {
-									if (e.key === "1") {
-										showRecommendation();
-										setRecomVisible(true);
-									} else if (e.key === "2") {
-										hideRecommendation();
-										setRecomVisible(false);
-									}
-								}
-								if (record.key === "1") {
-									const newList = cloneDeep(markerVisible);
-									if (e.key === "1") {
-										showMarkers();
-										newList[0] = true;
-									} else if (e.key === "2") {
-										hideMarkers();
-										newList[0] = false;
-									}
-									setMarkerVisible(newList);
-								}
-							},
-						}}
-					>
-						<span onClick={(e) => e.preventDefault()}>
-							Pins on map <DownOutlined />
-						</span>
-					</Dropdown>
-				</Space>
-			),
+			render: (record) => searchMarkerAct(record),
 		},
 	];
+	function searchMarkerAct(record) {
+		return (
+			<Space size="middle">
+				<Dropdown
+					menu={{
+						items: items3,
+						onClick: (e) => searchMarkerClick(record, e),
+					}}
+				>
+					<span onClick={(e) => e.preventDefault()}>
+						Pins on map <DownOutlined />
+					</span>
+				</Dropdown>
+			</Space>
+		);
+	}
+	function searchMarkerClick(record, e) {
+		hideAllMarkers(plansData);
+		if (record.key === "0") {
+			if (e.key === "1") {
+				showRecommendation();
+				setRecomVisible(true);
+			} else if (e.key === "2") {
+				hideRecommendation();
+				setRecomVisible(false);
+			}
+		}
+		if (record.key === "1") {
+			const newList = cloneDeep(markerVisible);
+			if (e.key === "1") {
+				showMarkers();
+				newList[0] = true;
+			} else if (e.key === "2") {
+				hideMarkers();
+				newList[0] = false;
+			}
+			setMarkerVisible(newList);
+		}
+	}
 	const dataSearch = [
 		{
 			key: "0",
@@ -577,13 +530,6 @@ const SimpleMap = (props) => {
 			),
 		},
 	];
-	function findIndex(markerList, target) {
-		for (let i = 0; i < markerList.length; i++) {
-			if (markerList[i].title === target.name) {
-				return i;
-			}
-		}
-	}
 
 	const defaultProps = {
 		center: {
@@ -634,8 +580,16 @@ const SimpleMap = (props) => {
 					console.log(results);
 					setPlaces([]);
 					deleteMarkers();
+					const list = [];
 					for (let i = 0; i < results.length; i++) {
-						detailsSearch(results[i].place_id);
+						list.push([]);
+					}
+					for (let i = 0; i < results.length; i++) {
+						let set = false;
+						if (i === results.length - 1) {
+							set = true;
+						}
+						detailsSearch(results[i].place_id, list, i, set);
 						createMarker(results[i], i, mapInstance);
 					}
 					return;
@@ -850,8 +804,16 @@ const SimpleMap = (props) => {
 					console.log(results);
 					setPlaces([]);
 					deleteMarkers();
+					const list = [];
 					for (let i = 0; i < results.length; i++) {
-						detailsSearch(results[i].place_id);
+						list.push([]);
+					}
+					for (let i = 0; i < results.length; i++) {
+						let set = false;
+						if (i === results.length - 1) {
+							set = true;
+						}
+						detailsSearch(results[i].place_id, list, i, set);
 						createMarker(results[i], i, mapInstance);
 					}
 					return;
@@ -862,7 +824,7 @@ const SimpleMap = (props) => {
 		}
 	};
 
-	const detailsSearch = (id) => {
+	const detailsSearch = (id, list, i, set) => {
 		if (mapApiLoaded) {
 			const service = new mapApi.places.PlacesService(mapInstance);
 
@@ -884,7 +846,10 @@ const SimpleMap = (props) => {
 					place.geometry &&
 					place.geometry.location
 				) {
-					setPlaces((places) => [...places, place]);
+					list[i] = place;
+					if (set) {
+						setPlaces(list);
+					}
 					return;
 				}
 				console.log("error");
@@ -1253,4 +1218,4 @@ const SimpleMap = (props) => {
 	);
 };
 
-export default SimpleMap;
+export default CreatePlanContent;
