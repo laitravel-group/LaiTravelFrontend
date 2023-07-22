@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Button, message } from "antd";
-import { login, signup } from "../api";
+import { login, signup } from "../../api";
 import LoginSignupModal from "./LoginSignupModal";
 
 export default function LoginSignupButton({ onLoginSuccess }) {

@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router";
 import { Layout } from "antd";
 import PageHeader from "../components/PageHeader";
-import NewPlanCreate from "../components/NewPlanCreate";
-import NewPlanBuild from "../components/NewPlanBuild";
+import NewPlanCreate from "../components/new-plan/NewPlanCreate";
+import NewPlanBuild from "../components/new-plan/NewPlanBuild";
 
 const { Content } = Layout;
 
@@ -18,6 +18,11 @@ export default function NewPlan() {
 	});
 	const [dates, setDates] = useState(null);
 	const [placesData, setPlacesData] = useState({});
+	// google map api
+	const [mapInstance, setMapInstance] = useState(null);
+	const [mapApi, setMapApi] = useState(null);
+	const [mapApiLoaded, setMapApiLoaded] = useState(false);
+	const 
 
 	useEffect(() => {
 		if (cityLocation.lat !== null && cityLocation.lng !== null) {
@@ -37,6 +42,9 @@ export default function NewPlan() {
 							dates={dates}
 							setDates={setDates}
 							setPlacesData={setPlacesData}
+							mapInstance={mapInstance}
+							setMapInstance={setMapInstance}
+							mapApi={}
 						/>
 					</Content>
 				</>

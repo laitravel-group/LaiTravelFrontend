@@ -2,7 +2,7 @@ import React from "react";
 import { Col, Image, Row, theme } from "antd";
 import { Header } from "antd/es/layout/layout";
 import { Link } from "react-router-dom";
-import LoginSignupButton from "./LoginSignupButton";
+import LoginSignupButton from "./login/LoginSignupButton";
 
 export default function PageHeader() {
 	const { token } = theme.useToken();
