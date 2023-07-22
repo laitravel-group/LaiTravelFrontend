@@ -44,9 +44,11 @@ const colors = [
 	"gold",
 ];
 
-const AnyReactComponent = ({ text }) => <div>{text}</div>;
-
 export default function NewPlanBuild(props) {
+	const googleMap = props.googleMap;
+	const [mapInstance, mapApi, mapApiLoaded] = googleMap;
+	const [setMapInstance, setMapApi, setMapApiLoaded] = googleMap;
+
 	const [myPosition, setMyPosition] = useState({
 		lat: props.cityLocation.lat,
 		lng: props.cityLocation.lng,
@@ -67,6 +69,9 @@ export default function NewPlanBuild(props) {
 		}
 	};
 
+	return <></>;
+
+	/*
 	return (
 		// Important! Always set the container height explicitly
 		<div style={{ height: "100vh" }}>
@@ -189,5 +194,5 @@ export default function NewPlanBuild(props) {
 				</Layout>
 			</Layout>
 		</div>
-	);
+	);*/
 }

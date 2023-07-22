@@ -85,7 +85,7 @@ const InitCity = (props) => {
 					lat: place.geometry.location.lat(),
 					lng: place.geometry.location.lng(),
 				},
-				radius: 30000,
+				radius: 50000,
 				keyword: "famous travel spot",
 				rankBy: mapApi.places.RankBy.PROMINENCE,
 			};

@@ -10,19 +10,27 @@ const { Content } = Layout;
 export default function NewPlan() {
 	const location = useLocation();
 	const propsFromLink = location.state;
-	const [subPage, setSubPage] = useState(propsFromLink?.subPage ?? "search");
 
+	const [subPage, setSubPage] = useState(propsFromLink?.subPage ?? "search");
 	const [cityLocation, setCityLocation] = useState({
 		lat: null,
 		lng: null,
 	});
 	const [dates, setDates] = useState(null);
-	const [placesData, setPlacesData] = useState({});
+	// recommendation from /places api
+	const [recommendedPlaces, setRecommendedPlaces] = useState({});
 	// google map api
 	const [mapInstance, setMapInstance] = useState(null);
 	const [mapApi, setMapApi] = useState(null);
 	const [mapApiLoaded, setMapApiLoaded] = useState(false);
-	const 
+	const googleMap = {
+		mapInstance: mapInstance,
+		setMapInstance: setMapInstance,
+		mapApi: mapApi,
+		setMapApi: setMapApi,
+		mapApiLoaded: mapApiLoaded,
+		setMapApiLoaded: setMapApiLoaded,
+	};
 
 	useEffect(() => {
 		if (cityLocation.lat !== null && cityLocation.lng !== null) {
@@ -41,10 +49,8 @@ export default function NewPlan() {
 							setCityLocation={setCityLocation}
 							dates={dates}
 							setDates={setDates}
-							setPlacesData={setPlacesData}
-							mapInstance={mapInstance}
-							setMapInstance={setMapInstance}
-							mapApi={}
+							setPlacesData={setRecommendedPlaces}
+							googleMap={googleMap}
 						/>
 					</Content>
 				</>
@@ -54,7 +60,7 @@ export default function NewPlan() {
 				<NewPlanBuild
 					cityLocation={cityLocation}
 					dates={dates}
-					placesData={placesData}
+					recommendedPlaces={recommendedPlaces}
 				/>
 			)}
 		</Layout>
