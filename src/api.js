@@ -75,7 +75,7 @@ export const userEdit = (credentials) => {
 
 // place
 export const getPlaces = (city, startDate, endDate) => {
-	const url = `${domain}/places?city=${city}&startDate=${startDate}&endDate=${endDate}`;
+	const url = `${domain}/places?city=${city}&start_date=${startDate}&end_date=${endDate}`;
 	return fetch(url).then((res) => {
 		handleResponseStatus(res, `Failed to get places`);
 		return res.json();
@@ -105,7 +105,7 @@ export const getTripPlanList = () => {
 };
 
 export const getTripPlanDetails = (tripId) => {
-	const url = `${domain}/trip-plan-details?tripId=${tripId}`;
+	const url = `${domain}/trip-plan-details?trip_id=${tripId}`;
 	const authToken = localStorage.getItem("authToken");
 	return fetch(url, {
 		headers: {

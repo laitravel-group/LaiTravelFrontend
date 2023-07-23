@@ -1,31 +1,11 @@
-import React, { useEffect, useState } from "react";
-import {
-	AutoComplete,
-	Badge,
-	Button,
-	Dropdown,
-	Input,
-	Layout,
-	notification,
-	Space,
-	Table,
-	TimePicker,
-} from "antd";
-import {
-	CalendarOutlined,
-	DeleteOutlined,
-	DownOutlined,
-	EyeInvisibleOutlined,
-	EyeOutlined,
-	FieldNumberOutlined,
-	ScheduleOutlined,
-	SearchOutlined,
-} from "@ant-design/icons";
+import React, { useState } from "react";
+import { Button, Layout, Modal } from "antd";
+import { ExclamationCircleFilled } from "@ant-design/icons";
 import GoogleMap from "google-maps-react-markers";
-import { cloneDeep } from "lodash";
 import PageHeader from "../PageHeader";
-import ScrollableBox from "../ScrollableBox";
 import { apiKey } from "../../key";
+import SearchBox from "./SearchBox";
+import ScrollableBox from "../ScrollableBox";
 
 const { Content, Footer, Sider } = Layout;
 const colors = [
@@ -45,31 +25,104 @@ const colors = [
 ];
 
 export default function NewPlanBuild(props) {
-	const googleMap = props.googleMap;
-	const [mapInstance, mapApi, mapApiLoaded] = googleMap;
-	const [setMapInstance, setMapApi, setMapApiLoaded] = googleMap;
+	const { confirm } = Modal;
 
-	const [myPosition, setMyPosition] = useState({
+	// google map
+	const { googleMap } = props;
+	const { mapInstance, mapApi, mapApiLoaded } = googleMap;
+	const { setMapInstance, setMapApi, setMapApiLoaded } = googleMap;
+
+	// states
+	const [mapCenter, setMapCenter] = useState({
 		lat: props.cityLocation.lat,
 		lng: props.cityLocation.lng,
 	});
+	const [placesSearchResult, setPlacesSearchResult] = useState([]);
 
-	const apiHasLoaded = (map, maps) => {
-		setMapInstance(map);
-		setMapApi(maps);
-		setMapApiLoaded(true);
-	};
+	// google place service
+	const placesService = new mapApi.places.PlacesService(mapInstance);
 
 	const handleCenterChange = () => {
 		if (mapApiLoaded) {
-			setMyPosition({
+			setMapCenter({
 				lat: mapInstance.center.lat(),
 				lng: mapInstance.center.lng(),
 			});
 		}
 	};
 
-	return <></>;
+	return (
+		<Layout
+			style={{
+				position: "fixed",
+				top: 0,
+				left: 0,
+				width: "100%",
+				height: "100vh",
+			}}
+			hasSider
+		>
+			<Sider width={"calc(100% - 928px)"} theme="light">
+				<GoogleMap
+					apiKey={apiKey}
+					onChange={handleCenterChange}
+					defaultCenter={props.cityLocation}
+					defaultZoom={11}
+					yesIWantToUseGoogleMapApiInternals
+					onGoogleApiLoaded={({ map, maps }) => {
+						setMapInstance(map);
+						setMapApi(maps);
+						setMapApiLoaded(true);
+					}}
+				></GoogleMap>
+			</Sider>
+			<Layout style={{ marginLeft: "15px", marginRight: "100px" }}>
+				<PageHeader />
+				<Content>
+					<SearchBox
+						googleMap={googleMap}
+						placesService={placesService}
+						setSearchResult={setPlacesSearchResult}
+					/>
+				</Content>
+				<Content>Recommendation</Content>
+				<Content>
+					Scrollbars
+					<ScrollableBox>
+						<p style={{ minHeight: "1000px" }}>abc</p>
+					</ScrollableBox>
+				</Content>
+				<Content>Plan Edit</Content>
+				<Footer
+					style={{
+						textAlign: "center",
+					}}
+				>
+					<Button
+						type="primary"
+						onClick={() => {}}
+						style={{ marginRight: "10px" }}
+					>
+						Generate Travel Plan
+					</Button>
+					<Button
+						onClick={() =>
+							confirm({
+								icon: <ExclamationCircleFilled />,
+								title: "Are you sure to reset your travel plan?",
+								content: "You will lose all your plan data!",
+								onOk() {
+									props.setSubPage("search");
+								},
+							})
+						}
+					>
+						Reset Travel Plan
+					</Button>
+				</Footer>
+			</Layout>
+		</Layout>
+	);
 
 	/*
 	return (

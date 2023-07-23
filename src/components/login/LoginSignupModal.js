@@ -19,7 +19,7 @@ export default function LoginSignupModal(props) {
 			onCancel={handleModalCancel}
 			footer={null}
 		>
-			{type == "Login" && (
+			{type === "Login" && (
 				<Form onFinish={handleLoginSubmit}>
 					<Form.Item
 						style={{ marginTop: "24px" }}
@@ -74,7 +74,7 @@ export default function LoginSignupModal(props) {
 				</Form>
 			)}
 
-			{type == "Sign Up" && (
+			{type === "Sign Up" && (
 				<Form onFinish={handleSignupSubmit}>
 					<Form.Item
 						style={{ marginTop: "24px" }}

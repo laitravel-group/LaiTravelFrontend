@@ -1,11 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router";
-import { Layout } from "antd";
-import PageHeader from "../components/PageHeader";
 import NewPlanCreate from "../components/new-plan/NewPlanCreate";
 import NewPlanBuild from "../components/new-plan/NewPlanBuild";
-
-const { Content } = Layout;
 
 export default function NewPlan() {
 	const location = useLocation();
@@ -34,35 +30,30 @@ export default function NewPlan() {
 
 	useEffect(() => {
 		if (cityLocation.lat !== null && cityLocation.lng !== null) {
-			setSubPage("plan");
+			setSubPage("planning");
 		} else {
 			setSubPage("search");
 		}
 	}, [cityLocation]);
-	return (
-		<Layout style={{ height: "100vh" }}>
-			{subPage === "search" && (
-				<>
-					<PageHeader />
-					<Content>
-						<NewPlanCreate
-							setCityLocation={setCityLocation}
-							dates={dates}
-							setDates={setDates}
-							setPlacesData={setRecommendedPlaces}
-							googleMap={googleMap}
-						/>
-					</Content>
-				</>
-			)}
 
-			{subPage === "plan" && (
-				<NewPlanBuild
-					cityLocation={cityLocation}
-					dates={dates}
-					recommendedPlaces={recommendedPlaces}
-				/>
-			)}
-		</Layout>
-	);
+	if (subPage === "search")
+		return (
+			<NewPlanCreate
+				setCityLocation={setCityLocation}
+				dates={dates}
+				setDates={setDates}
+				setRecommendedPlaces={setRecommendedPlaces}
+				googleMap={googleMap}
+			/>
+		);
+	else if (subPage === "planning")
+		return (
+			<NewPlanBuild
+				cityLocation={cityLocation}
+				dates={dates}
+				recommendedPlaces={recommendedPlaces}
+				setSubPage={setSubPage}
+				googleMap={googleMap}
+			/>
+		);
 }

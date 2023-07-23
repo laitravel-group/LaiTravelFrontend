@@ -768,7 +768,6 @@ const CreatePlanContent = (props) => {
 		if (!autoInput) {
 			setAutoList([]);
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [autoInput]);
 
 	const findLocation = () => {

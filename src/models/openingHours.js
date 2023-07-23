@@ -15,7 +15,26 @@ export class OpeningHours {
 		);
 	}
 
-	static fromGoogleApiOpeningHours(googleOpeningHours) {
+	// subject to change due to google api inconsistency
+	static fromGooglePlaceServiceApiOpeningHours(googleOpeningHours) {
+		let weekdayText = googleOpeningHours.weekday_text;
+		return googleOpeningHours.periods.map((period) => {
+			let dayOfWeek = weekdayText[period.open.day];
+			let openTime = dayjs()
+				.hour(period.open.hours)
+				.minute(period.open.minutes);
+			let closeTime =
+				period.close !== undefined
+					? dayjs()
+							.hour(period.close.hours)
+							.minute(period.close.minutes)
+					: dayjs().hour(18);
+			return new OpeningHours(dayOfWeek, openTime, closeTime);
+		});
+	}
+
+	// beta
+	static fromGooglePlaceApiOpeningHours(googleOpeningHours) {
 		let weekdayDescriptions = googleOpeningHours.weekdayDescriptions;
 		return googleOpeningHours.periods.map((period) => {
 			let dayOfWeek = weekdayDescriptions[period.open.day];
