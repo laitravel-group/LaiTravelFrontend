@@ -19,7 +19,7 @@ export class TripPlan {
 			jsonObject.destination_city,
 			dayjs(jsonObject.start_date, "YYYY-MM-DD"),
 			dayjs(jsonObject.end_date, "YYYY-MM-DD"),
-			jsonObject.details.map((details) =>
+			jsonObject.details?.map((details) =>
 				TripPlanDetailsPerDay.fromJson(details)
 			)
 		);
@@ -32,7 +32,7 @@ export class TripPlan {
 			destination_city: this.destinationCity,
 			start_date: this.startDate.format("YYYY-MM-DD"),
 			end_date: this.endDate.format("YYYY-MM-DD"),
-			details: this.details.map((details) => details.toJson()),
+			details: this.details?.map((details) => details.toJson()),
 		};
 	}
 }

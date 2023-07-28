@@ -1,4 +1,3 @@
-import { json } from "react-router-dom";
 import { OpeningHours } from "./openingHours";
 
 export class Place {
@@ -89,7 +88,7 @@ export class Place {
 			jsonObject.formatted_address,
 			jsonObject.description,
 			jsonObject.rating,
-			jsonObject.opening_hours.map((opening_hours) =>
+			jsonObject.opening_hours?.map((opening_hours) =>
 				OpeningHours.fromJson(opening_hours)
 			)
 		);
@@ -105,7 +104,7 @@ export class Place {
 			types: this.types,
 			formatted_address: this.formattedAddress,
 			rating: this.rating,
-			opening_hours: this.openingHours.map((openingHours) =>
+			opening_hours: this.openingHours?.map((openingHours) =>
 				openingHours.toJson()
 			),
 		};

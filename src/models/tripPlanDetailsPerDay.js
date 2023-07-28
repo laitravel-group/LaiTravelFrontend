@@ -18,7 +18,7 @@ export class TripPlanDetailsPerDay {
 			Place.fromJson(jsonObject.start_location),
 			dayjs(jsonObject.start_time, "HH:mm"),
 			dayjs(jsonObject.end_time, "HH:mm"),
-			jsonObject.visits.map((visit) => PlaceVisitDetails.fromJson(visit))
+			jsonObject.visits?.map((visit) => PlaceVisitDetails.fromJson(visit))
 		);
 	}
 
@@ -28,7 +28,7 @@ export class TripPlanDetailsPerDay {
 			start_location: this.startLocation.toJson(),
 			start_time: this.startTime.format("HH:mm"),
 			end_time: this.end_time.format("HH:mm"),
-			visits: this.visits.map((visit) => visit.toJson()),
+			visits: this.visits?.map((visit) => visit.toJson()),
 		};
 	}
 }
