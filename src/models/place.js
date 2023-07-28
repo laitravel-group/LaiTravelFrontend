@@ -1,3 +1,4 @@
+import { json } from "react-router-dom";
 import { OpeningHours } from "./openingHours";
 
 export class Place {
@@ -76,7 +77,25 @@ export class Place {
 		);
 	}
 
-	toJsonObject() {
+	// backend api conversion
+	static fromJson(jsonObject) {
+		return new Place(
+			jsonObject.place_id,
+			jsonObject.place_name,
+			jsonObject.lat,
+			jsonObject.lng,
+			jsonObject.photo,
+			jsonObject.types,
+			jsonObject.formatted_address,
+			jsonObject.description,
+			jsonObject.rating,
+			jsonObject.opening_hours.map((opening_hours) =>
+				OpeningHours.fromJson(opening_hours)
+			)
+		);
+	}
+
+	toJson() {
 		return {
 			place_id: this.placeId,
 			place_name: this.placeName,
@@ -87,7 +106,7 @@ export class Place {
 			formatted_address: this.formattedAddress,
 			rating: this.rating,
 			opening_hours: this.openingHours.map((openingHours) =>
-				openingHours.toJsonObject()
+				openingHours.toJson()
 			),
 		};
 	}

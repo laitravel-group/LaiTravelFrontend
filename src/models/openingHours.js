@@ -7,14 +7,6 @@ export class OpeningHours {
 		this.closeTime = closeTime;
 	}
 
-	static fromJsonObject(json) {
-		return new OpeningHours(
-			json.day_of_week,
-			dayjs(json.open_time, "HH:mm"),
-			dayjs(json.close_time, "HH:mm")
-		);
-	}
-
 	// subject to change due to google api inconsistency
 	static fromGooglePlaceServiceApiOpeningHours(googleOpeningHours) {
 		let weekdayText = googleOpeningHours.weekday_text;
@@ -51,7 +43,16 @@ export class OpeningHours {
 		});
 	}
 
-	toJsonObject() {
+	// backend api conversion
+	static fromJson(jsonObject) {
+		return new OpeningHours(
+			jsonObject.day_of_week,
+			dayjs(jsonObject.open_time, "HH:mm"),
+			dayjs(jsonObject.close_time, "HH:mm")
+		);
+	}
+
+	toJson() {
 		return {
 			day_of_week: this.dayOfWeek,
 			open_time: this.openTime.format("HH:mm"),
