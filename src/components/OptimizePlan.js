@@ -3,62 +3,31 @@ import { Layout, Timeline, Button } from "antd";
 import PageHeader from "../components/PageHeader";
 import dayjs from "dayjs";
 import { useNavigate } from "react-router-dom";
+import { buildTripPlan, saveTripPlan } from "../api";
 
 export default function OptimizePlan({ desiredPlan }) {
-  // Store all retrieved travel plan details
   const [tripPlanDetails, setTripPlanDetails] = useState([]);
-  // Store the selected travel plan details (in this case, the first plan)
   const [tripPlan, setTripPlan] = useState(null);
   const navigate = useNavigate();
 
-  const ownerId = "your-owner-id"; // Modify as needed
-
   useEffect(() => {
-    // Send a request to the backend to get travel plan details
-    fetch("/api/trip-plan-build", {
-      method: "POST",
-      body: JSON.stringify({
-        desired_plan: desiredPlan, // Use the desired plan passed as props
-      }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((res) => res.json())
+    buildTripPlan(desiredPlan)
       .then((data) => {
         setTripPlanDetails(data.proposed_plans);
-        // Select the first plan for display
         setTripPlan(data.proposed_plans[0]);
       })
       .catch((error) => {
-        console.error("An error occurred:", error);
+        console.error("Failed to generate a trip plan:", error);
       });
-  }, [desiredPlan]); // Use desiredPlan as a dependency
+  }, [desiredPlan]);
 
   const handleSave = (plan) => {
-    // Send a request to the backend to save the selected travel plan
-    fetch("/api/trip-plan-save", {
-      method: "POST",
-      body: JSON.stringify(plan),
-      headers: {
-        "Content-Type": "application/json",
-      },
-      // Add ownerId as a query parameter (adjust as needed)
-      params: {
-        ownerId: ownerId,
-      },
-    })
-      .then((res) => {
-        if (res.ok) {
-          // Logic for successful save
-          console.log("Trip plan saved successfully!");
-        } else {
-          // Handle possible error response
-          console.error("Failed to save trip plan:", res.status);
-        }
+    saveTripPlan(plan)
+      .then(() => {
+        console.log("Trip plan saved successfully!");
       })
       .catch((error) => {
-        console.error("An error occurred:", error);
+        console.error("Failed to save the trip plan:", error);
       });
   };
 
