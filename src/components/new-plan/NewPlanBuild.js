@@ -6,6 +6,7 @@ import PageHeader from "../PageHeader";
 import { apiKey } from "../../key";
 import SearchBox from "./SearchBox";
 import ScrollableBox from "../ScrollableBox";
+import TestPage from "../../pages/TestPage";
 
 const { Content, Footer, Sider } = Layout;
 const colors = [
@@ -92,7 +93,10 @@ export default function NewPlanBuild(props) {
 						<p style={{ minHeight: "1000px" }}>abc</p>
 					</ScrollableBox>
 				</Content>
-				<Content>Plan Edit</Content>
+				<Content>
+					Plan Edit
+					<TestPage />
+				</Content>
 				<Footer
 					style={{
 						textAlign: "center",
