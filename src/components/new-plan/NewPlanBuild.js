@@ -16,6 +16,8 @@ import ScrollableBox from "../ScrollableBox";
 import TripPlanTabs from "./TripPlanTabs";
 import SearchBox from "./SearchBox";
 import { TripPlan } from "../../models/tripPlan";
+import MyPlans from "../MyPlan";
+import { tripPlanJson } from "../../models/testData";
 
 const { Content, Footer, Sider } = Layout;
 const colors = [
@@ -63,6 +65,7 @@ export default function NewPlanBuild(props) {
 	const [tripPlan, setTripPlan] = useState(
 		TripPlan.init(city.placeId, city.placeName, dates[0], dates[1])
 	);
+	const [previewModalOpen, setPreviewModalOpen] = useState(false);
 
 	const { modal } = AntdApp.useApp();
 
@@ -84,7 +87,10 @@ export default function NewPlanBuild(props) {
 		}
 	};
 
-	const numDays = dates[1].diff(dates[0], "day") + 1;
+	//debug
+	useEffect(() => {
+		setTripPlan(TripPlan.fromJson(tripPlanJson));
+	}, []);
 
 	return (
 		<Layout
@@ -173,7 +179,12 @@ export default function NewPlanBuild(props) {
 							offset={4}
 							style={{ textAlign: "right" }}
 						>
-							<Button type="link">Preview</Button>
+							<Button
+								type="link"
+								onClick={() => setPreviewModalOpen(true)}
+							>
+								Preview
+							</Button>
 							<Button
 								type="primary"
 								style={{ marginRight: "20px" }}
@@ -183,6 +194,13 @@ export default function NewPlanBuild(props) {
 							</Button>
 						</Col>
 					</Row>
+					<Modal
+						open={previewModalOpen}
+						onCancel={() => setPreviewModalOpen(false)}
+						footer={null}
+					>
+						<MyPlans tripPlan={tripPlan} />
+					</Modal>
 				</Content>
 			</Layout>
 		</Layout>

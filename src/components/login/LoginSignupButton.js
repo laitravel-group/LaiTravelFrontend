@@ -20,11 +20,6 @@ export default function LoginSignupButton({ onLoginSuccess }) {
 		setModalOpen(true);
 	};
 
-	// close modal
-	const handleModalCancel = () => {
-		setModalOpen(false);
-	};
-
 	const handleLoginSubmit = async (data) => {
 		setLoading(true);
 		try {
@@ -67,7 +62,9 @@ export default function LoginSignupButton({ onLoginSuccess }) {
 				loading={loading}
 				handleLoginSubmit={handleLoginSubmit}
 				handleSignupSubmit={handleSignupSubmit}
-				handleModalCancel={handleModalCancel}
+				handleModalCancel={() => {
+					setModalOpen(false);
+				}}
 				type={type}
 				setType={setType}
 			/>
