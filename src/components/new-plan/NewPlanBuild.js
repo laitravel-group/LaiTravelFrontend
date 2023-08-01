@@ -142,7 +142,7 @@ export default function NewPlanBuild(props) {
 						/>
 					</ScrollableBox>
 				</Content>
-				<Footer>
+				<Content>
 					<Row>
 						<Col span={8} style={{ textAlign: "center" }}>
 							<Button
@@ -174,13 +174,16 @@ export default function NewPlanBuild(props) {
 							style={{ textAlign: "right" }}
 						>
 							<Button type="link">Preview</Button>
-							<Button type="primary">
+							<Button
+								type="primary"
+								style={{ marginRight: "20px" }}
+							>
 								<CalendarOutlined />
 								Optimise Trip Plan
 							</Button>
 						</Col>
 					</Row>
-				</Footer>
+				</Content>
 			</Layout>
 		</Layout>
 	);
