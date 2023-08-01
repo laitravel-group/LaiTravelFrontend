@@ -1,14 +1,16 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Button, App as AntdApp } from "antd";
+import { AuthContext } from "../../App";
 import { login, signup } from "../../api";
 import LoginSignupModal from "./LoginSignupModal";
 
-export default function LoginSignupButton({ onLoginSuccess }) {
+export default function LoginSignupButton() {
 	const [modalOpen, setModalOpen] = useState(false);
 	const [loading, setLoading] = useState(false);
 	const [type, setType] = useState("");
 
 	const { message } = AntdApp.useApp();
+	const auth = useContext(AuthContext);
 
 	// open up modal
 	const handleLoginOnClick = () => {
@@ -24,7 +26,7 @@ export default function LoginSignupButton({ onLoginSuccess }) {
 		setLoading(true);
 		try {
 			await login(data);
-			onLoginSuccess();
+			auth.handleLoginSuccess();
 		} catch (error) {
 			message.error(error.message);
 		} finally {

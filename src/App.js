@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { createContext, useEffect, useState } from "react";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import { ConfigProvider, App as AntdApp, theme } from "antd";
 import Home from "./pages/Home";
@@ -7,6 +7,8 @@ import User from "./pages/User";
 import MyPlans from "./pages/MyPlans";
 import NewPlan from "./pages/NewPlan";
 import TestPage from "./pages/TestPage";
+
+export const AuthContext = createContext();
 
 export default function App() {
 	const [authed, setAuthed] = useState();
@@ -34,24 +36,24 @@ export default function App() {
 	const router = createBrowserRouter([
 		{
 			path: "/",
-			element: <Home {...props} />,
+			element: <Home />,
 			errorElement: <ErrorPage />,
 		},
 		{
 			path: "/user",
-			element: <User {...props} />,
+			element: <User />,
 		},
 		{
 			path: "/my_plans",
-			element: <MyPlans {...props} />,
+			element: <MyPlans />,
 		},
 		{
 			path: "/new_plan",
-			element: <NewPlan {...props} />,
+			element: <NewPlan />,
 		},
 		{
 			path: "/test",
-			element: <TestPage {...props} />,
+			element: <TestPage />,
 		},
 	]);
 
@@ -69,9 +71,11 @@ export default function App() {
 				},
 			}}
 		>
-			<AntdApp>
-				<RouterProvider router={router} />
-			</AntdApp>
+			<AuthContext.Provider value={props}>
+				<AntdApp auth={props}>
+					<RouterProvider router={router} />
+				</AntdApp>
+			</AuthContext.Provider>
 		</ConfigProvider>
 	);
 }

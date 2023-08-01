@@ -1,11 +1,14 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Col, Image, Row, theme } from "antd";
 import { Header } from "antd/es/layout/layout";
 import { Link } from "react-router-dom";
 import LoginSignupButton from "./login/LoginSignupButton";
+import LogoutUserButton from "./login/LogoutUserButton";
+import { AuthContext } from "../App";
 
 export default function PageHeader() {
 	const { token } = theme.useToken();
+	const auth = useContext(AuthContext);
 	return (
 		<Header
 			style={{
@@ -26,7 +29,8 @@ export default function PageHeader() {
 					</Link>
 				</Col>
 				<Col style={{ display: "flex", alignItems: "center" }}>
-					<LoginSignupButton />
+					{auth.authed && <LogoutUserButton />}
+					{!auth.authed && <LoginSignupButton />}
 				</Col>
 			</Row>
 		</Header>

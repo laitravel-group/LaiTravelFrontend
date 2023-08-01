@@ -3,7 +3,7 @@ const google_api_key = "AIzaSyC2CxkBl9JyAPvO0lAKDrvBHw4oURSCXFI";
 
 // auth
 export const signup = (credentials) => {
-	const url = `${domain}/signup`;
+	const url = `${domain}/auth/signup`;
 	return fetch(url, {
 		method: "POST",
 		headers: {
@@ -14,7 +14,7 @@ export const signup = (credentials) => {
 };
 
 export const login = (credentials) => {
-	const url = `${domain}/login`;
+	const url = `${domain}/auth/login`;
 	return fetch(url, {
 		method: "POST",
 		headers: {
@@ -27,7 +27,7 @@ export const login = (credentials) => {
 };
 
 export const logout = () => {
-	const url = `${domain}/logout`;
+	const url = `${domain}/auth/logout`;
 	return fetch(url, {
 		method: "POST",
 		credentials: "include",

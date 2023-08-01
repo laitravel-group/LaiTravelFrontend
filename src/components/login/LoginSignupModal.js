@@ -12,6 +12,9 @@ export default function LoginSignupModal(props) {
 		handleSignupSubmit,
 		handleModalCancel,
 	} = props;
+
+	const [form] = Form.useForm();
+
 	return (
 		<Modal
 			title={type}
@@ -123,19 +126,18 @@ export default function LoginSignupModal(props) {
 								required: true,
 								message: "Please confirm your password!",
 							},
-							({ getFieldValue }) => ({
-								validator(_, value) {
-									if (
-										!value ||
-										getFieldValue("password") === value
-									) {
-										return Promise.resolve();
+							{
+								validator: (_, value) => {
+									const password =
+										form.getFieldValue("password");
+									if (value && value !== password) {
+										return Promise.reject(
+											"Passwords do not match"
+										);
 									}
-									return Promise.reject(
-										"Passwords do not match!"
-									);
+									return Promise.resolve();
 								},
-							}),
+							},
 						]}
 					>
 						<Input.Password placeholder="Confirm Password" />
