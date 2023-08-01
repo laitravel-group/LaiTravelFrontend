@@ -4,6 +4,7 @@ import { AutoComplete, message } from "antd";
 export default function SearchBox({
 	googleMap,
 	placesService,
+	autocompleteService,
 	setSearchResult,
 	searchCallback,
 }) {
@@ -13,8 +14,6 @@ export default function SearchBox({
 	const [options, setOptions] = useState([]);
 
 	const { mapApi } = googleMap;
-
-	const autocompleteService = new mapApi.places.AutocompleteService();
 
 	const handleAutocomplete = () => {
 		const request = {

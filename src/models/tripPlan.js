@@ -11,6 +11,30 @@ export class TripPlan {
 		this.details = details;
 	}
 
+	// init
+	static init(cityId, destinationCity, startDate, endDate) {
+		const numDays = endDate.diff(startDate, "day") + 1;
+		const buildPlanForDays = (numDays) => {
+			let plans = [];
+			for (let i = 0; i < numDays; i++) {
+				plans = [
+					...plans,
+					TripPlanDetailsPerDay.init(startDate.add(i, "day")),
+				];
+			}
+			return plans;
+		};
+
+		return new TripPlan(
+			undefined,
+			cityId,
+			destinationCity,
+			startDate,
+			endDate,
+			buildPlanForDays(numDays)
+		);
+	}
+
 	// backend api conversion
 	static fromJson(jsonObject) {
 		return new TripPlan(

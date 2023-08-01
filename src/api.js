@@ -10,9 +10,7 @@ export const signup = (credentials) => {
 			"Content-Type": "application/json",
 		},
 		body: JSON.stringify(credentials),
-	}).then((res) =>
-		handleResponseStatus(res, `Failed to register: ${res.text}`)
-	);
+	}).then((res) => handleResponseStatus(res, "Failed to register"));
 };
 
 export const login = (credentials) => {
@@ -24,12 +22,11 @@ export const login = (credentials) => {
 		},
 		body: JSON.stringify(credentials),
 	}).then((res) => {
-		handleResponseStatus(
+		const json = handleResponseStatus(
 			res,
 			"Failed to log in: incorrect username or password"
 		);
-		const token = res.text();
-		localStorage.setItem("authToken", token);
+		localStorage.setItem("authToken", json.token);
 	});
 };
 
@@ -99,7 +96,10 @@ export const getTripPlanList = () => {
 			Authorization: `Bearer ${authToken}`,
 		},
 	}).then((res) => {
-		handleResponseStatus(res, `Failed to get trip plan list: ${res.text}`);
+		handleResponseStatus(
+			res,
+			`Failed to get trip plan list: ${res.text()}`
+		);
 		return res.json();
 	});
 };
@@ -114,7 +114,7 @@ export const getTripPlanDetails = (tripId) => {
 	}).then((res) => {
 		handleResponseStatus(
 			res,
-			`Failed to get trip plan details: ${res.text}`
+			`Failed to get trip plan details: ${res.text()}`
 		);
 		return res.json();
 	});
@@ -131,7 +131,7 @@ export const deleteTripPlan = async (tripId) => {
 	}).then((res) => {
 		handleResponseStatus(
 			res,
-			`Failed to delete the trip plan: ${res.text}`
+			`Failed to delete the trip plan: ${res.text()}`
 		);
 		return res.json();
 	});
@@ -148,7 +148,7 @@ export const buildTripPlan = (desiredPlan) => {
 	}).then((res) => {
 		handleResponseStatus(
 			res,
-			`Failed to generate a trip plan: ${res.text}`
+			`Failed to generate a trip plan: ${res.text()}`
 		);
 		return res.json();
 	});
@@ -165,7 +165,7 @@ export const buildUpdateTripPlan = (updatedPlan) => {
 	}).then((res) => {
 		handleResponseStatus(
 			res,
-			`Failed to update the trip plan: ${res.text}`
+			`Failed to update the trip plan: ${res.text()}`
 		);
 		return res.json();
 	});
@@ -182,7 +182,10 @@ export const saveTripPlan = (data) => {
 		},
 		body: JSON.stringify(data),
 	}).then((res) => {
-		handleResponseStatus(res, `Failed to save the trip plan: ${res.text}`);
+		handleResponseStatus(
+			res,
+			`Failed to save the trip plan: ${res.text()}`
+		);
 		return res.json();
 	});
 };
@@ -195,10 +198,27 @@ const handleResponseStatus = (res, errMsg) => {
 	if (status === 401) {
 		localStorage.removeItem("authToken");
 		window.location.reload();
-		return;
 	}
 
-	if (!ok) {
-		throw Error(errMsg);
+	// Check if the response is JSON
+	const contentType = res?.headers.get("content-type");
+	if (contentType && contentType.includes("application/json")) {
+		if (!ok) {
+			return res.json().then((json) => {
+				throw Error(`${errMsg}: ${JSON.stringify(json)}`);
+			});
+		} else {
+			return res.json();
+		}
+	} else {
+		// Otherwise, treat the response as plain text
+		if (!ok) {
+			return res.text().then((text) => {
+				if (text) throw Error(`${errMsg}: ${text}`);
+				else throw Error(`${errMsg}: Something went wrong.`);
+			});
+		} else {
+			return res.text();
+		}
 	}
 };

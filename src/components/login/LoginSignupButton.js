@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, message } from "antd";
+import { Button, App as AntdApp } from "antd";
 import { login, signup } from "../../api";
 import LoginSignupModal from "./LoginSignupModal";
 
@@ -8,7 +8,7 @@ export default function LoginSignupButton({ onLoginSuccess }) {
 	const [loading, setLoading] = useState(false);
 	const [type, setType] = useState("");
 
-	const [messageApi, contextHolder] = message.useMessage();
+	const { message } = AntdApp.useApp();
 
 	// open up modal
 	const handleLoginOnClick = () => {
@@ -26,27 +26,25 @@ export default function LoginSignupButton({ onLoginSuccess }) {
 	};
 
 	const handleLoginSubmit = async (data) => {
-		console.log(data);
 		setLoading(true);
 		try {
 			await login(data);
 			onLoginSuccess();
 		} catch (error) {
-			messageApi.error(error.message);
+			message.error(error.message);
 		} finally {
 			setLoading(false);
 		}
 	};
 
 	const handleSignupSubmit = async (data) => {
-		console.log(data);
 		setLoading(true);
 		try {
 			await signup(data);
-			messageApi.success("Sign up successfully");
+			message.success("Sign up successfully");
 			setModalOpen(false);
 		} catch (error) {
-			messageApi.error(error.message);
+			message.error(error.message);
 		} finally {
 			setLoading(false);
 		}
@@ -54,7 +52,6 @@ export default function LoginSignupButton({ onLoginSuccess }) {
 
 	return (
 		<>
-			{contextHolder}
 			<Button
 				type="primary"
 				className="header-button"

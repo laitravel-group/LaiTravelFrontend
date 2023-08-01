@@ -1,11 +1,21 @@
-import React, { useState } from "react";
-import { Button, Layout, Modal } from "antd";
-import { ExclamationCircleFilled } from "@ant-design/icons";
+import React, { useEffect, useState } from "react";
+import {
+	App as AntdApp,
+	Button,
+	Layout,
+	Modal,
+	Row,
+	Col,
+	Collapse,
+} from "antd";
+import { ExclamationCircleFilled, CalendarOutlined } from "@ant-design/icons";
 import GoogleMap from "google-maps-react-markers";
 import PageHeader from "../PageHeader";
-import { apiKey } from "../../key";
-import SearchBox from "./SearchBox";
+import apiKey from "../../key";
 import ScrollableBox from "../ScrollableBox";
+import TripPlanTabs from "./TripPlanTabs";
+import SearchBox from "./SearchBox";
+import { TripPlan } from "../../models/tripPlan";
 
 const { Content, Footer, Sider } = Layout;
 const colors = [
@@ -25,22 +35,45 @@ const colors = [
 ];
 
 export default function NewPlanBuild(props) {
-	const { confirm } = Modal;
+	const { dates, city, recommendedPlaces } = props;
+	//console.log(recommendedPlaces);
 
-	// google map
-	const { googleMap } = props;
-	const { mapInstance, mapApi, mapApiLoaded } = googleMap;
-	const { setMapInstance, setMapApi, setMapApiLoaded } = googleMap;
+	// google map api
+	const [mapInstance, setMapInstance] = useState(null);
+	const [mapApi, setMapApi] = useState(null);
+	const [placesService, setplacesService] = useState(null);
+	const [autocompleteService, setAutocompleteService] = useState(null);
+	const [mapApiLoaded, setMapApiLoaded] = useState(false);
+	const googleMap = {
+		mapInstance: mapInstance,
+		mapApi: mapApi,
+		placesService: placesService,
+		autocompleteService: autocompleteService,
+		mapApiLoaded: mapApiLoaded,
+	};
 
 	// states
 	const [mapCenter, setMapCenter] = useState({
-		lat: props.cityLocation.lat,
-		lng: props.cityLocation.lng,
+		lat: city.lat,
+		lng: city.lng,
 	});
+
 	const [placesSearchResult, setPlacesSearchResult] = useState([]);
 
-	// google place service
-	const placesService = new mapApi.places.PlacesService(mapInstance);
+	const [tripPlan, setTripPlan] = useState(
+		TripPlan.init(city.placeId, city.placeName, dates[0], dates[1])
+	);
+
+	const { modal } = AntdApp.useApp();
+
+	useEffect(() => {
+		if (mapApiLoaded) {
+			setAutocompleteService(
+				new mapApi.places.AutocompleteService(mapInstance)
+			);
+			setplacesService(new mapApi.places.PlacesService(mapInstance));
+		}
+	}, [mapInstance]);
 
 	const handleCenterChange = () => {
 		if (mapApiLoaded) {
@@ -50,6 +83,8 @@ export default function NewPlanBuild(props) {
 			});
 		}
 	};
+
+	const numDays = dates[1].diff(dates[0], "day") + 1;
 
 	return (
 		<Layout
@@ -65,10 +100,10 @@ export default function NewPlanBuild(props) {
 			<Sider width={"calc(100% - 928px)"} theme="light">
 				<GoogleMap
 					apiKey={apiKey}
-					onChange={handleCenterChange}
-					defaultCenter={props.cityLocation}
+					defaultCenter={{ lat: city.lat, lng: city.lng }}
 					defaultZoom={11}
 					yesIWantToUseGoogleMapApiInternals
+					onChange={handleCenterChange}
 					onGoogleApiLoaded={({ map, maps }) => {
 						setMapInstance(map);
 						setMapApi(maps);
@@ -79,46 +114,72 @@ export default function NewPlanBuild(props) {
 			<Layout style={{ marginLeft: "15px", marginRight: "100px" }}>
 				<PageHeader />
 				<Content>
-					<SearchBox
-						googleMap={googleMap}
-						placesService={placesService}
-						setSearchResult={setPlacesSearchResult}
-					/>
-				</Content>
-				<Content>Recommendation</Content>
-				<Content>
-					Scrollbars
 					<ScrollableBox>
-						<p style={{ minHeight: "1000px" }}>abc</p>
+						<Collapse
+							className="collapse-box"
+							defaultActiveKey={["recommendations", "plan"]}
+							size="large"
+							ghost
+							items={[
+								{
+									key: "recommendations",
+									label: "Explore",
+									children: (
+										<p>Placeholder for Recommendations</p>
+									),
+								},
+								{
+									key: "plan",
+									label: "Places to Visit",
+									children: (
+										<TripPlanTabs
+											dates={dates}
+											tripPlan={tripPlan}
+										/>
+									),
+								},
+							]}
+						/>
 					</ScrollableBox>
 				</Content>
-				<Content>Plan Edit</Content>
-				<Footer
-					style={{
-						textAlign: "center",
-					}}
-				>
-					<Button
-						type="primary"
-						onClick={() => {}}
-						style={{ marginRight: "10px" }}
-					>
-						Generate Travel Plan
-					</Button>
-					<Button
-						onClick={() =>
-							confirm({
-								icon: <ExclamationCircleFilled />,
-								title: "Are you sure to reset your travel plan?",
-								content: "You will lose all your plan data!",
-								onOk() {
-									props.setSubPage("search");
-								},
-							})
-						}
-					>
-						Reset Travel Plan
-					</Button>
+				<Footer>
+					<Row>
+						<Col span={8} style={{ textAlign: "center" }}>
+							<Button
+								type="primary"
+								onClick={() => {}}
+								style={{ marginRight: "40px" }}
+							>
+								Save
+							</Button>
+							<Button
+								onClick={() =>
+									modal.confirm({
+										icon: <ExclamationCircleFilled />,
+										title: "Are you sure to reset your travel plan?",
+										content:
+											"You will lose all your plan data!",
+										onOk() {
+											props.setSubPage("search");
+										},
+									})
+								}
+							>
+								Reset
+							</Button>
+						</Col>
+						<Col
+							span={12}
+							offset={4}
+							style={{ textAlign: "right" }}
+						>
+							<Button type="link">Preview</Button>
+							<Button type="primary">
+								<CalendarOutlined />
+								Optimise Trip Plan
+							</Button>
+						</Col>
+					</Row>
 				</Footer>
 			</Layout>
 		</Layout>

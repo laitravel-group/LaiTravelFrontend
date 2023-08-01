@@ -2,58 +2,60 @@ import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router";
 import NewPlanCreate from "../components/new-plan/NewPlanCreate";
 import NewPlanBuild from "../components/new-plan/NewPlanBuild";
+import { Place } from "../models/place";
+import { getPlaces } from "../api";
 
 export default function NewPlan() {
 	const location = useLocation();
 	const propsFromLink = location.state;
 
 	const [subPage, setSubPage] = useState(propsFromLink?.subPage ?? "search");
-	const [cityLocation, setCityLocation] = useState({
-		lat: null,
-		lng: null,
-	});
+	const [city, setCity] = useState(null);
+	// start and end dates
 	const [dates, setDates] = useState(null);
 	// recommendation from /places api
 	const [recommendedPlaces, setRecommendedPlaces] = useState({});
-	// google map api
-	const [mapInstance, setMapInstance] = useState(null);
-	const [mapApi, setMapApi] = useState(null);
-	const [mapApiLoaded, setMapApiLoaded] = useState(false);
-	const googleMap = {
-		mapInstance: mapInstance,
-		setMapInstance: setMapInstance,
-		mapApi: mapApi,
-		setMapApi: setMapApi,
-		mapApiLoaded: mapApiLoaded,
-		setMapApiLoaded: setMapApiLoaded,
-	};
+	useEffect(() => {
+		if (city !== null) {
+			/* getPlaces(
+				city.placeName,
+				dates[0].format("YYYY-MM-DD"),
+				dates[1].format("YYYY-MM-DD")
+			).then((data) => {
+				setRecommendedPlaces(
+					data?.places?.map((place) => Place.fromJson(place))
+				);
+			}); */
+			setRecommendedPlaces([]);
+		}
+	}, [city]);
 
 	useEffect(() => {
-		if (cityLocation.lat !== null && cityLocation.lng !== null) {
+		if (city !== null) {
 			setSubPage("planning");
 		} else {
 			setSubPage("search");
 		}
-	}, [cityLocation]);
+	}, [recommendedPlaces]);
 
-	if (subPage === "search")
+	if (subPage === "search") {
 		return (
 			<NewPlanCreate
-				setCityLocation={setCityLocation}
 				dates={dates}
 				setDates={setDates}
+				city={city}
+				setCity={setCity}
 				setRecommendedPlaces={setRecommendedPlaces}
-				googleMap={googleMap}
 			/>
 		);
-	else if (subPage === "planning")
+	} else if (subPage === "planning") {
 		return (
 			<NewPlanBuild
-				cityLocation={cityLocation}
 				dates={dates}
+				city={city}
 				recommendedPlaces={recommendedPlaces}
 				setSubPage={setSubPage}
-				googleMap={googleMap}
 			/>
 		);
+	}
 }

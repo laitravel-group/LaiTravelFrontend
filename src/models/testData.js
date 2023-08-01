@@ -22,7 +22,6 @@ export const tripPlanJson = {
 						lng: 151.21131704281586,
 					},
 					stay_duration: 30,
-					is_visited: false,
 				},
 				{
 					place: {
@@ -32,7 +31,6 @@ export const tripPlanJson = {
 						lng: 151.21510537950104,
 					},
 					stay_duration: 120,
-					is_visited: false,
 				},
 				{
 					place: {
@@ -42,7 +40,6 @@ export const tripPlanJson = {
 						lng: 151.2773225059465,
 					},
 					stay_duration: 120,
-					is_visited: false,
 				},
 			],
 		},

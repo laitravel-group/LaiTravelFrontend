@@ -16,7 +16,7 @@ import {
 	TimePicker,
 	Typography,
 } from "antd";
-import { apiKey } from "../key";
+import apiKey from "../key";
 import GoogleMap from "google-maps-react-markers";
 import {
 	CalendarOutlined,

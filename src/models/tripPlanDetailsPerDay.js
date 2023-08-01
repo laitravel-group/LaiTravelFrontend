@@ -2,6 +2,11 @@ import dayjs from "dayjs";
 import { Place } from "./place";
 import { PlaceVisitDetails } from "./placeVisitDetails";
 
+//const { setTripPlan } = props;
+//const { tripPlanDetailsPerDay, setTripPlanDetailsPerDay } = props;
+
+//const { tripPlan } = props;
+
 export class TripPlanDetailsPerDay {
 	constructor(date, startLocation, startTime, endTime, visits) {
 		this.date = date;
@@ -9,6 +14,16 @@ export class TripPlanDetailsPerDay {
 		this.startTime = startTime;
 		this.endTime = endTime;
 		this.visits = visits;
+	}
+
+	static init(date) {
+		return new TripPlanDetailsPerDay(
+			date,
+			undefined,
+			undefined,
+			undefined,
+			[]
+		);
 	}
 
 	// backend api conversion

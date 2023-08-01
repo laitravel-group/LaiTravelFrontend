@@ -1,5 +1,8 @@
 import { OpeningHours } from "./openingHours";
 
+//const { recommendedPlaces } = props;
+//const { addPlace } = props;
+
 export class Place {
 	constructor(
 		placeId,
@@ -29,6 +32,21 @@ export class Place {
 		return new Place(
 			null,
 			null,
+			lat,
+			lng,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null
+		);
+	}
+
+	static simpleCity(cityId, cityName, lat, lng) {
+		return new Place(
+			cityId,
+			cityName,
 			lat,
 			lng,
 			null,

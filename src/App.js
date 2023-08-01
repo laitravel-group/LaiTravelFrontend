@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
-import { ConfigProvider, theme } from "antd";
+import { ConfigProvider, App as AntdApp, theme } from "antd";
 import Home from "./pages/Home";
 import ErrorPage from "./pages/ErrorPage";
 import User from "./pages/User";
@@ -69,7 +69,9 @@ export default function App() {
 				},
 			}}
 		>
-			<RouterProvider router={router} />
+			<AntdApp>
+				<RouterProvider router={router} />
+			</AntdApp>
 		</ConfigProvider>
 	);
 }
