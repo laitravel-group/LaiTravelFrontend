@@ -1,11 +1,4 @@
 import {
-	CalendarOutlined,
-	ClockCircleTwoTone,
-	DeleteOutlined,
-	ExclamationCircleFilled,
-	FieldNumberOutlined,
-} from "@ant-design/icons";
-import {
 	Button,
 	Dropdown,
 	Image,
@@ -16,6 +9,13 @@ import {
 	Space,
 	TimePicker,
 } from "antd";
+import {
+	CalendarOutlined,
+	ClockCircleTwoTone,
+	DeleteOutlined,
+	ExclamationCircleFilled,
+	FieldNumberOutlined,
+} from "@ant-design/icons";
 import React, { useState } from "react";
 
 const { confirm } = Modal;

@@ -9,7 +9,7 @@ export default function TestPage() {
 	console.log(tripPlan);
 	return (
 		<>
-			<PlaceVisitEdit tripPlan={tripPlan} day={1} />
+			<PlaceVisitEdit tripPlan={tripPlan} day={0} />
 		</>
 	);
 }
