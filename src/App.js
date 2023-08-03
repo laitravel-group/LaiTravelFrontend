@@ -65,6 +65,7 @@ export default function App() {
 					colorTextLightSolid: "#000",
 					colorPrimary: "#ffde59",
 					colorPrimaryBg: "#fffffa",
+					colorBgSpotlight: "#ffde59",
 					colorBgLayout: "#fffffa",
 					colorBgContainer: "#fefefe",
 					fontFamily: "Segoe UI, Tahoma, Geneva, Verdana, sans-serif",

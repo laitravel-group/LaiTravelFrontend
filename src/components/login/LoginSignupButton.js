@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import { Button, App as AntdApp } from "antd";
+import { App as AntdApp, Button, Space } from "antd";
 import { AuthContext } from "../../App";
 import { login, signup } from "../../api";
 import LoginSignupModal from "./LoginSignupModal";
@@ -26,6 +26,7 @@ export default function LoginSignupButton() {
 		setLoading(true);
 		try {
 			await login(data);
+			message.success("Log in successfully");
 			auth.handleLoginSuccess();
 		} catch (error) {
 			message.error(error.message);
@@ -39,7 +40,6 @@ export default function LoginSignupButton() {
 		try {
 			await signup(data);
 			message.success("Sign up successfully");
-			setModalOpen(false);
 		} catch (error) {
 			message.error(error.message);
 		} finally {
@@ -48,7 +48,7 @@ export default function LoginSignupButton() {
 	};
 
 	return (
-		<>
+		<Space size="large">
 			<Button
 				type="primary"
 				className="header-button"
@@ -70,6 +70,6 @@ export default function LoginSignupButton() {
 				type={type}
 				setType={setType}
 			/>
-		</>
+		</Space>
 	);
 }

@@ -1,12 +1,12 @@
 @import url("new-plan-build.css");
 
 .header-button {
-	margin: 20px;
-	width: 175px;
-	height: 55px;
-	border-radius: 28px;
+	margin-top: 20px;
+	width: 160px;
+	height: 50px;
+	border-radius: 26px;
 	font-weight: bolder;
-	font-size: 30px;
+	font-size: 25px;
 }
 
 .home-panel {

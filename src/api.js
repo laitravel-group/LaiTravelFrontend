@@ -3,7 +3,8 @@ const google_api_key = "AIzaSyC2CxkBl9JyAPvO0lAKDrvBHw4oURSCXFI";
 
 // auth
 export const signup = (credentials) => {
-	const url = `${domain}/auth/signup`;
+	console.log(credentials);
+	const url = `${domain}/signup`;
 	return fetch(url, {
 		method: "POST",
 		headers: {
@@ -14,7 +15,7 @@ export const signup = (credentials) => {
 };
 
 export const login = (credentials) => {
-	const url = `${domain}/auth/login`;
+	const url = `${domain}/login`;
 	return fetch(url, {
 		method: "POST",
 		headers: {
@@ -26,11 +27,13 @@ export const login = (credentials) => {
 		.then((json) => localStorage.setItem("authToken", json.token));
 };
 
-export const logout = () => {
-	const url = `${domain}/auth/logout`;
+export const logout = (authToken) => {
+	const url = `${domain}/logout`;
 	return fetch(url, {
 		method: "POST",
-		credentials: "include",
+		headers: {
+			Authorization: `Bearer ${authToken}`,
+		},
 	}).then((res) => handleResponseStatus(res, "Failed to log out"));
 };
 
