@@ -1,8 +1,5 @@
 import { OpeningHours } from "./openingHours";
 
-//const { recommendedPlaces } = props;
-//const { addPlace } = props;
-
 export class Place {
 	constructor(
 		placeId,

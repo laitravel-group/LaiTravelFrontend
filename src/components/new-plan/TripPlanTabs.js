@@ -2,7 +2,7 @@ import React from "react";
 import { Tabs } from "antd";
 import { CalendarOutlined } from "@ant-design/icons";
 
-export default function TripPlanTabs({ dates, tripPlan }) {
+export default function TripPlanTabs({ dates, setCurrentDay, tripPlan }) {
 	const numDays = dates[1].diff(dates[0], "day") + 1;
 	const items = new Array(numDays).fill(null).map((_, i) => {
 		return {
@@ -12,7 +12,7 @@ export default function TripPlanTabs({ dates, tripPlan }) {
 					{dates[0].add(i, "day").format("MMM DD")}
 				</span>
 			),
-			key: i + 1,
+			key: i,
 			children: (
 				<p style={{ minHeight: "400px" }}>
 					Placeholder for tab content
@@ -20,5 +20,13 @@ export default function TripPlanTabs({ dates, tripPlan }) {
 			),
 		};
 	});
-	return <Tabs defaultActiveKey="1" items={items} />;
+	return (
+		<Tabs
+			defaultActiveKey="1"
+			onChange={(activeKey) => {
+				setCurrentDay(activeKey);
+			}}
+			items={items}
+		/>
+	);
 }

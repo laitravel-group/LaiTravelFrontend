@@ -22,11 +22,14 @@ export class PlaceVisitDetails {
 	}
 
 	toJson() {
+		const startTimeStr = this.startTime.format("HH:mm");
+		const endTimeStr = this.endTime.format("HH:mm");
 		return {
 			place: this.place.toJson(),
 			travel_time: this.travelTime,
-			start_time: this.startTime.format("HH:mm"),
-			end_time: this.endTime.format("HH:mm"),
+			start_time:
+				startTimeStr === "Invalid Date" ? undefined : startTimeStr,
+			end_time: endTimeStr === "Invalid Date" ? undefined : endTimeStr,
 			stay_duration: this.stayDuration,
 		};
 	}

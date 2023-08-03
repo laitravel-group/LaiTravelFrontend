@@ -53,10 +53,13 @@ export class OpeningHours {
 	}
 
 	toJson() {
+		const openTimeStr = this.openTime.format("HH:mm");
+		const closeTimeStr = this.closeTime.format("HH:mm");
 		return {
 			day_of_week: this.dayOfWeek,
-			open_time: this.openTime.format("HH:mm"),
-			close_time: this.closeTime.format("HH:mm"),
+			open_time: openTimeStr === "Invalid Date" ? undefined : openTimeStr,
+			close_time:
+				closeTimeStr === "Invalid Date" ? undefined : closeTimeStr,
 		};
 	}
 }

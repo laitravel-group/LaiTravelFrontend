@@ -123,7 +123,7 @@ export const buildTripPlan = (desiredPlan) => {
 		headers: {
 			"Content-Type": "application/json",
 		},
-		body: JSON.stringify(desiredPlan),
+		body: JSON.stringify({ desired_plan: desiredPlan }),
 	}).then((res) =>
 		handleResponseStatus(res, `Failed to generate a trip plan`)
 	);
@@ -136,7 +136,7 @@ export const buildUpdateTripPlan = (updatedPlan) => {
 		headers: {
 			"Content-Type": "application/json",
 		},
-		body: JSON.stringify(updatedPlan),
+		body: JSON.stringify({ desired_plan: updatedPlan }),
 	}).then((res) =>
 		handleResponseStatus(res, `Failed to update the trip plan`)
 	);

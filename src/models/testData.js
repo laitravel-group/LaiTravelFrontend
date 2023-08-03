@@ -2,11 +2,11 @@ export const tripPlanJson = {
 	trip_id: 2,
 	city_id: "ChIJP3Sa8ziYEmsRUKgyFmh9AQM",
 	destination_city: "Sydney",
-	start_date: "2023-08-03",
-	end_date: "2023-08-04",
+	start_date: "2023-08-12",
+	end_date: "2023-08-13",
 	details: [
 		{
-			date: "2023-08-03",
+			date: "2023-08-12",
 			start_location: {
 				place_name: "start",
 				lat: -33.88275286637396,
@@ -39,12 +39,12 @@ export const tripPlanJson = {
 						lat: -33.89119321916367,
 						lng: 151.2773225059465,
 					},
-					stay_duration: 120,
+					stay_duration: 125,
 				},
 			],
 		},
 		{
-			date: "2023-08-04",
+			date: "2023-08-13",
 			start_location: {
 				place_name: "start",
 				lat: -33.88275286637396,

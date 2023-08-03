@@ -2,11 +2,6 @@ import dayjs from "dayjs";
 import { Place } from "./place";
 import { PlaceVisitDetails } from "./placeVisitDetails";
 
-//const { setTripPlan } = props;
-//const { tripPlanDetailsPerDay, setTripPlanDetailsPerDay } = props;
-
-//const { tripPlan } = props;
-
 export class TripPlanDetailsPerDay {
 	constructor(date, startLocation, startTime, endTime, visits) {
 		this.date = date;
@@ -38,11 +33,14 @@ export class TripPlanDetailsPerDay {
 	}
 
 	toJson() {
+		const startTimeStr = this.startTime.format("HH:mm");
+		const endTimeStr = this.endTime.format("HH:mm");
 		return {
 			date: this.date.format("YYYY-MM-DD"),
 			start_location: this.startLocation.toJson(),
-			start_time: this.startTime.format("HH:mm"),
-			end_time: this.end_time.format("HH:mm"),
+			start_time:
+				startTimeStr === "Invalid Date" ? undefined : startTimeStr,
+			end_time: endTimeStr === "Invalid Date" ? undefined : endTimeStr,
 			visits: this.visits?.map((visit) => visit.toJson()),
 		};
 	}
