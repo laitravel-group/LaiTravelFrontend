@@ -1,8 +1,14 @@
 import React from "react";
 import { Tabs } from "antd";
 import { CalendarOutlined } from "@ant-design/icons";
+import PlaceVisitEdit from "./PlaceVisitEdit";
 
-export default function TripPlanTabs({ dates, setCurrentDay, tripPlan }) {
+export default function TripPlanTabs({
+	dates,
+	currentDay,
+	setCurrentDay,
+	tripPlan,
+}) {
 	const numDays = dates[1].diff(dates[0], "day") + 1;
 	const items = new Array(numDays).fill(null).map((_, i) => {
 		return {
@@ -13,11 +19,7 @@ export default function TripPlanTabs({ dates, setCurrentDay, tripPlan }) {
 				</span>
 			),
 			key: i,
-			children: (
-				<p style={{ minHeight: "400px" }}>
-					Placeholder for tab content
-				</p>
-			),
+			children: <PlaceVisitEdit tripPlan={tripPlan} day={currentDay} />,
 		};
 	});
 	return (

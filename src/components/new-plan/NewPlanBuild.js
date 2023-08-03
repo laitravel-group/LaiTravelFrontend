@@ -146,6 +146,7 @@ export default function NewPlanBuild(props) {
 									children: (
 										<TripPlanTabs
 											dates={dates}
+											currentDay={currentDay}
 											setCurrentDay={setCurrentDay}
 											tripPlan={tripPlan}
 										/>
