@@ -4,7 +4,7 @@ import GoogleMap from "google-maps-react-markers";
 import dayjs from "dayjs";
 import { getFormatString } from "../../utils";
 import { getPlaces } from "../../api";
-import { apiKey } from "../../key";
+import apiKey from "../../key";
 import PageHeader from "../PageHeader";
 
 const { Content } = Layout;

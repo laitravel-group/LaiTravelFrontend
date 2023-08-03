@@ -3,7 +3,7 @@ import { Button, Layout, Modal } from "antd";
 import { ExclamationCircleFilled } from "@ant-design/icons";
 import GoogleMap from "google-maps-react-markers";
 import PageHeader from "../PageHeader";
-import { apiKey } from "../../key";
+import apiKey from "../../key";
 import SearchBox from "./SearchBox";
 import ScrollableBox from "../ScrollableBox";
 import TestPage from "../../pages/TestPage";
