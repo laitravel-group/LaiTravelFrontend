@@ -11,14 +11,14 @@ import {
 import { ExclamationCircleFilled, CalendarOutlined } from "@ant-design/icons";
 import GoogleMap from "google-maps-react-markers";
 import PageHeader from "../PageHeader";
-import apiKey from "../../key";
 import ScrollableBox from "../ScrollableBox";
 import TripPlanTabs from "./TripPlanTabs";
 import SearchBox from "./SearchBox";
-import { TripPlan } from "../../models/tripPlan";
 import MyPlans from "../MyPlan";
-import { tripPlanJson } from "../../models/testData";
 import OptimizePlan from "../OptimizePlan";
+import { TripPlan } from "../../models/tripPlan";
+import { tripPlanJson } from "../../models/testData";
+import apiKey from "../../key";
 
 const { Content, Footer, Sider } = Layout;
 const colors = [
@@ -146,6 +146,7 @@ export default function NewPlanBuild(props) {
 									children: (
 										<TripPlanTabs
 											dates={dates}
+											currentDay={currentDay}
 											setCurrentDay={setCurrentDay}
 											tripPlan={tripPlan}
 										/>
