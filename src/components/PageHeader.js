@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import LoginSignupButton from "./login/LoginSignupButton";
 import LogoutUserButton from "./login/LogoutUserButton";
 import { AuthContext } from "../App";
+import { useEffect, useState } from "react";
 
 export default function PageHeader() {
 	const { token } = theme.useToken();

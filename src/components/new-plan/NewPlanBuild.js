@@ -11,13 +11,15 @@ import {
 import { ExclamationCircleFilled, CalendarOutlined } from "@ant-design/icons";
 import GoogleMap from "google-maps-react-markers";
 import PageHeader from "../PageHeader";
-import apiKey from "../../key";
+import {google_api_key} from "../../api";
 import ScrollableBox from "../ScrollableBox";
 import TripPlanTabs from "./TripPlanTabs";
 import SearchBox from "./SearchBox";
 import { TripPlan } from "../../models/tripPlan";
 import MyPlans from "../MyPlan";
 import { tripPlanJson } from "../../models/testData";
+
+const apiKey = google_api_key;
 
 const { Content, Footer, Sider } = Layout;
 const colors = [

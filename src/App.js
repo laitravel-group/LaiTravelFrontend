@@ -7,6 +7,7 @@ import User from "./pages/User";
 import MyPlans from "./pages/MyPlans";
 import NewPlan from "./pages/NewPlan";
 import TestPage from "./pages/TestPage";
+import Profile from "./pages/Profile";
 
 export const AuthContext = createContext();
 
@@ -54,6 +55,10 @@ export default function App() {
 		{
 			path: "/test",
 			element: <TestPage />,
+		},
+		{
+			path: "/profile",
+			element: <Profile />,
 		},
 	]);
 

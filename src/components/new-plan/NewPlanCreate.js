@@ -4,12 +4,14 @@ import GoogleMap from "google-maps-react-markers";
 import dayjs from "dayjs";
 import PageHeader from "../PageHeader";
 import { getFormatString } from "../../utils";
-import apiKey from "../../key";
+import {google_api_key} from "../../api";
 
 import { Place } from "../../models/place";
 
 const { Content } = Layout;
 const { RangePicker } = DatePicker;
+
+const apiKey = google_api_key;
 
 export default function NewPlanCreate(props) {
 	const { dates, city, destinationCity } = props;

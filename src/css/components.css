@@ -9,6 +9,25 @@
 	font-size: 30px;
 }
 
+.profile-button {
+	margin: 20px;
+	width: 175px;
+	height: 55px;
+	border-radius: 20px;
+	font-weight: bolder;
+	font-size: 20px;
+	/* background-color:cornsilk; */
+}
+
+.user-button {
+	margin: 20px;
+	width: 175px;
+	height: 55px;
+	border-radius: 10px;
+	font-weight: bolder;
+	font-size: 20px;
+}
+
 .home-panel {
 	width: 560px;
 }
