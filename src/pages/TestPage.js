@@ -3,13 +3,16 @@ import PlaceVisitEdit from "../components/new-plan/PlaceVisitEdit";
 import { tripPlanJson } from "../models/testData";
 import { TripPlan } from "../models/tripPlan";
 import OptimizePlan from "../components/OptimizePlan";
+import { recommendedPlacesJson } from "../models/testPlacesDataSydney";
+import { Place } from "../models/place";
+import RecommendCard from "../components/RecommendCard";
 
 export default function TestPage() {
-	const tripPlan = TripPlan.fromJson(tripPlanJson);
-	console.log(tripPlan);
+	const recommendedPlaces = recommendedPlacesJson.places.map((place) => {
+		return Place.fromJson(place);
+	});
+
 	return (
-		<>
-			<PlaceVisitEdit tripPlan={tripPlan} day={0} />
-		</>
-	);
+		<RecommendCard recommendedPlaces={recommendedPlaces} addPlace={() => {}} />
+	)
 }
