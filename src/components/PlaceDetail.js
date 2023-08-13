@@ -17,6 +17,12 @@ const PlaceDetail = ({ place, isModalVisible, setIsModalVisible }) => {
     };
   });
 
+  // {
+  //   key: place.openingHours[0].day_of_week,
+  //   day: capitalize(place.openingHours[0].day_of_week),
+  //   hours: `${place.openingHours[0].open_time} - ${place.openingHours[0].close_time}`
+  // },
+
   const columns = [
     {
       title: 'Day',
