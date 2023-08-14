@@ -40,7 +40,6 @@ const colors = [
 
 export default function NewPlanBuild(props) {
 	const { dates, city, recommendedPlaces } = props;
-	console.log(recommendedPlaces);
 
 	// google map api
 	const [mapInstance, setMapInstance] = useState(null);
