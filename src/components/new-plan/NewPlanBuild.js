@@ -14,7 +14,7 @@ import PageHeader from "../PageHeader";
 import ScrollableBox from "../ScrollableBox";
 import TripPlanTabs from "./TripPlanTabs";
 import SearchBox from "./SearchBox";
-import MyPlans from "../MyPlan";
+import TripPlanView from "../TripPlanView";
 import OptimizePlan from "../OptimizePlan";
 import { TripPlan } from "../../models/tripPlan";
 import { tripPlanJson } from "../../models/testData";
@@ -219,7 +219,7 @@ export default function NewPlanBuild(props) {
 						onCancel={() => setPreviewModalOpen(false)}
 						footer={null}
 					>
-						<MyPlans tripPlan={tripPlan} />
+						<TripPlanView tripPlan={tripPlan} />
 					</Modal>
 					<Modal
 						open={optimizeModalOpen}
