@@ -19,7 +19,7 @@ import OptimizePlan from "../OptimizePlan";
 import { TripPlan } from "../../models/tripPlan";
 import { tripPlanJson } from "../../models/testData";
 import apiKey from "../../key";
-import RecommendCard from "../RecommendCard";
+import Recommendations from "./Recommendations";
 
 const { Content, Footer, Sider } = Layout;
 const colors = [
@@ -144,7 +144,7 @@ export default function NewPlanBuild(props) {
 									key: "recommendations",
 									label: "Explore",
 									children: (
-										<RecommendCard
+										<Recommendations
 											recommendedPlaces={
 												recommendedPlaces
 											}

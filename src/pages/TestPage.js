@@ -5,7 +5,7 @@ import { TripPlan } from "../models/tripPlan";
 import OptimizePlan from "../components/OptimizePlan";
 import { recommendedPlacesJson } from "../models/testPlacesDataSydney";
 import { Place } from "../models/place";
-import RecommendCard from "../components/RecommendCard";
+import Recommendations from "../components/new-plan/Recommendations";
 
 export default function TestPage() {
 	const recommendedPlaces = recommendedPlacesJson.places.map((place) => {
@@ -13,6 +13,9 @@ export default function TestPage() {
 	});
 
 	return (
-		<RecommendCard recommendedPlaces={recommendedPlaces} addPlace={() => {}} />
-	)
+		<Recommendations
+			recommendedPlaces={recommendedPlaces}
+			addPlace={() => {}}
+		/>
+	);
 }

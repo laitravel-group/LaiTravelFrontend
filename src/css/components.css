@@ -1,4 +1,5 @@
 @import url("new-plan-build.css");
+@import url("recomendations.css");
 
 .header-button {
 	margin-top: 20px;
@@ -24,7 +25,3 @@
 .new-plan-search-content {
 	margin: 25px;
 }
-
-
-  
-  

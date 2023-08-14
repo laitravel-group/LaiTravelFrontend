@@ -6,7 +6,11 @@ import {
 	CommentOutlined,
 } from "@ant-design/icons";
 
-const PlaceDetail = ({ place, isModalVisible, setIsModalVisible }) => {
+export default function PlaceDetailsModal({
+	place,
+	isModalVisible,
+	setIsModalVisible,
+}) {
 	const capitalize = (str) => {
 		if (!str || typeof str !== "string") return "";
 		return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
@@ -14,17 +18,13 @@ const PlaceDetail = ({ place, isModalVisible, setIsModalVisible }) => {
 
 	const dataSource = place.openingHours.map((entry) => {
 		return {
-			key: entry.day_of_week,
-			day: capitalize(entry.day_of_week),
-			hours: `${entry.open_time} - ${entry.close_time}`,
+			key: entry.dayOfWeek,
+			day: capitalize(entry.dayOfWeek),
+			hours: `${entry.openTime.format(
+				"HH:mm"
+			)} - ${entry.closeTime.format("HH:mm")}`,
 		};
 	});
-
-	// {
-	//   key: place.openingHours[0].day_of_week,
-	//   day: capitalize(place.openingHours[0].day_of_week),
-	//   hours: `${place.openingHours[0].open_time} - ${place.openingHours[0].close_time}`
-	// },
 
 	const columns = [
 		{
@@ -63,6 +63,4 @@ const PlaceDetail = ({ place, isModalVisible, setIsModalVisible }) => {
 			/>
 		</Modal>
 	);
-};
-
-export default PlaceDetail;
+}
