@@ -25,22 +25,17 @@ export default function PlaceVisitEdit({ tripPlan, currentDay }) {
 	const [listRerenderTrigger, setListRerenderTrigger] = useState(false);
 
 	const numDays = tripPlan.endDate.diff(tripPlan.startDate, "day") + 1;
-	const createDaysList = () => {
-		const list = [];
-		for (let i = 0; i < numDays; i++) {
-			list.push({
-				key: i.toString(),
-				label: (
-					<span>
-						<CalendarOutlined />{" "}
-						{[tripPlan.startDate.add(i, "day").format("MMM Do")]}
-					</span>
-				),
-			});
-		}
-		return list;
-	};
-	const daysList = createDaysList();
+	const daysList = new Array(numDays).fill(null).map((_, i) => {
+		return {
+			key: i.toString(),
+			label: (
+				<span>
+					<CalendarOutlined />{" "}
+					{[tripPlan.startDate.add(i, "day").format("MMM Do")]}
+				</span>
+			),
+		};
+	});
 	const placeData = tripPlan.details[currentDay].visits.map(
 		(placeVisitDetails, i) => ({
 			index: i,
@@ -50,18 +45,18 @@ export default function PlaceVisitEdit({ tripPlan, currentDay }) {
 		})
 	);
 
-	const optionItem = [
+	const optionItems = [
 		{
-			key: "00",
+			key: "show",
 			label: "Open on map",
 		},
 		{
-			key: "01",
+			key: "move",
 			label: "Move to",
 			children: daysList,
 		},
 		{
-			key: "02",
+			key: "delete",
 			label: (
 				<span>
 					Delete <DeleteOutlined />
@@ -70,13 +65,17 @@ export default function PlaceVisitEdit({ tripPlan, currentDay }) {
 		},
 	];
 
-	const handleOptionsClick = (placeIndex, clickedRowIndex) => {
-		if (clickedRowIndex === "00") {
-			console.log("Open on map");
-		} else if (clickedRowIndex === "02") {
-			showDeleteConfirm(placeIndex);
-		} else {
-			movePlace(placeIndex, clickedRowIndex);
+	const handleOptionsClick = (placeIndex, clickedOption) => {
+		switch (clickedOption) {
+			case "show":
+				console.log("Open on map");
+				break;
+			case "move":
+				movePlace(placeIndex, clickedOption);
+				break;
+			case "delete":
+				showDeleteConfirm(placeIndex);
+				break;
 		}
 	};
 	const showDeleteConfirm = (placeIndex) => {
@@ -129,7 +128,7 @@ export default function PlaceVisitEdit({ tripPlan, currentDay }) {
 		return (
 			<Dropdown
 				menu={{
-					items: optionItem,
+					items: optionItems,
 					onClick: (e) => handleOptionsClick(place.index, e.key),
 				}}
 				trigger={["click"]}

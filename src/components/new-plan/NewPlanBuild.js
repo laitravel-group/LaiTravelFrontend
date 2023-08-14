@@ -63,8 +63,8 @@ export default function NewPlanBuild(props) {
 
 	const [placesSearchResult, setPlacesSearchResult] = useState([]);
 	const [tripPlan, setTripPlan] = useState(
-		TripPlan.init(city.placeId, city.placeName, dates[0], dates[1])
-		//TripPlan.fromJson(tripPlanJson)
+		//TripPlan.init(city.placeId, city.placeName, dates[0], dates[1])
+		TripPlan.fromJson(tripPlanJson)
 	);
 	const [currentDay, setCurrentDay] = useState(0);
 	const [tripPlanOnCurrentDay, setTripPlanOnCurrentDay] = useState(
