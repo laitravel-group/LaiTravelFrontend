@@ -19,7 +19,9 @@ export default function TripPlanTabs({
 				</span>
 			),
 			key: i,
-			children: <PlaceVisitEdit tripPlan={tripPlan} day={currentDay} />,
+			children: (
+				<PlaceVisitEdit tripPlan={tripPlan} currentDay={currentDay} />
+			),
 		};
 	});
 	return (
