@@ -1,20 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Layout, Timeline } from "antd";
 import dayjs from "dayjs";
-import { TripPlanDetailsPerDay } from "../models/tripPlanDetailsPerDay";
-import { buildTripPlan, saveTripPlan } from "../api";
+import { TripPlanDetailsPerDay } from "../../models/tripPlanDetailsPerDay";
+import { buildTripPlan, saveTripPlan } from "../../api";
 
 export default function OptimizePlan({ desiredPlan, setTripPlanOnCurrentDay }) {
 	const [proposedPlans, setProposedPlans] = useState([]);
-	/* const handleSave = (plan) => {
-		saveTripPlan(plan)
-			.then(() => {
-				console.log("Trip plan saved successfully!");
-			})
-			.catch((error) => {
-				console.error("Failed to save the trip plan:", error);
-			});
-	}; */
 
 	useEffect(() => {
 		setProposedPlans([]);

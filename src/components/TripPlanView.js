@@ -14,6 +14,23 @@ export default function TripPlanView({ tripPlan }) {
 			),
 		};
 		if (detail.visits.length !== 0) {
+			const timelineItems = detail.visits.map((visit, visitIndex) => {
+				return {
+					children: (
+						<>
+							<h4>
+								{visit.startTime && visit.startTime.isValid()
+									? `${visit.startTime.format(
+											"HH:mm"
+									  )} - ${visit.endTime.format("HH:mm")} `
+									: "Not set yet"}
+							</h4>
+							<p>{visit.place.placeName}</p>
+							<p>{visit.place.description}</p>
+						</>
+					),
+				};
+			});
 			tabs.children = (
 				<div>
 					<h3>Date: {detail.date.format("YYYY-MM-DD")}</h3>
@@ -26,24 +43,7 @@ export default function TripPlanView({ tripPlan }) {
 						{detail.startTime?.format("HH:mm") ?? "Unset"}
 					</p>
 					<h4>Visits:</h4>
-					<Timeline mode="alternate">
-						{detail.visits.map((visit, visitIndex) => (
-							<Timeline.Item key={visitIndex}>
-								<h4>
-									{visit.startTime &&
-									visit.startTime.isValid()
-										? `${visit.startTime.format(
-												"HH:mm"
-										  )} - ${visit.endTime.format(
-												"HH:mm"
-										  )} `
-										: "Not set yet"}
-								</h4>
-								<p>{visit.place.placeName}</p>
-								<p>{visit.place.description}</p>
-							</Timeline.Item>
-						))}
-					</Timeline>
+					<Timeline mode="alternate" items={timelineItems} />
 				</div>
 			);
 		} else {

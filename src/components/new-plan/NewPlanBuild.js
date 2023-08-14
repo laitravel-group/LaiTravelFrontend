@@ -15,7 +15,7 @@ import ScrollableBox from "../ScrollableBox";
 import TripPlanTabs from "./TripPlanTabs";
 import SearchBox from "./SearchBox";
 import TripPlanView from "../TripPlanView";
-import OptimizePlan from "../OptimizePlan";
+import OptimizePlan from "./OptimizePlan";
 import { TripPlan } from "../../models/tripPlan";
 import { tripPlanJson } from "../../models/testData";
 import apiKey from "../../key";
