@@ -17,7 +17,7 @@ export default function NewPlan() {
 	const [recommendedPlaces, setRecommendedPlaces] = useState({});
 	useEffect(() => {
 		if (city !== null) {
-			/* getPlaces(
+			getPlaces(
 				city.placeName,
 				dates[0].format("YYYY-MM-DD"),
 				dates[1].format("YYYY-MM-DD")
@@ -25,8 +25,7 @@ export default function NewPlan() {
 				setRecommendedPlaces(
 					data?.places?.map((place) => Place.fromJson(place))
 				);
-			}); */
-			setRecommendedPlaces([]);
+			});
 		}
 	}, [city]);
 

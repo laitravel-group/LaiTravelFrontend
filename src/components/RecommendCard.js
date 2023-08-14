@@ -5,7 +5,7 @@ import PlaceDetail from "./PlaceDetail";
 
 const { Meta } = Card;
 
-const RecommendCard = ({ recommendedPlaces, addPlace }) => {
+export default function RecommendCard({ recommendedPlaces, addPlace }) {
 	const [selectedPlace, setSelectedPlace] = useState(null);
 	const [isModalVisible, setIsModalVisible] = useState(false);
 
@@ -57,6 +57,4 @@ const RecommendCard = ({ recommendedPlaces, addPlace }) => {
 			)}
 		</div>
 	);
-};
-
-export default RecommendCard;
+}

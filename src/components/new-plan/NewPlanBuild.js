@@ -19,6 +19,7 @@ import OptimizePlan from "../OptimizePlan";
 import { TripPlan } from "../../models/tripPlan";
 import { tripPlanJson } from "../../models/testData";
 import apiKey from "../../key";
+import RecommendCard from "../RecommendCard";
 
 const { Content, Footer, Sider } = Layout;
 const colors = [
@@ -39,7 +40,7 @@ const colors = [
 
 export default function NewPlanBuild(props) {
 	const { dates, city, recommendedPlaces } = props;
-	//console.log(recommendedPlaces);
+	console.log(recommendedPlaces);
 
 	// google map api
 	const [mapInstance, setMapInstance] = useState(null);
@@ -63,12 +64,12 @@ export default function NewPlanBuild(props) {
 
 	const [placesSearchResult, setPlacesSearchResult] = useState([]);
 	const [tripPlan, setTripPlan] = useState(
-		//TripPlan.init(city.placeId, city.placeName, dates[0], dates[1])
-		TripPlan.fromJson(tripPlanJson)
+		TripPlan.init(city.placeId, city.placeName, dates[0], dates[1])
+		//TripPlan.fromJson(tripPlanJson)
 	);
 	const [currentDay, setCurrentDay] = useState(0);
 	const [tripPlanOnCurrentDay, setTripPlanOnCurrentDay] = useState(
-		tripPlan[currentDay]
+		tripPlan.details[currentDay]
 	);
 	const [previewModalOpen, setPreviewModalOpen] = useState(false);
 	const [optimizeModalOpen, setOptimizeModalOpen] = useState(false);
@@ -91,6 +92,12 @@ export default function NewPlanBuild(props) {
 				lng: mapInstance.center.lng(),
 			});
 		}
+	};
+
+	const addPlace = (place) => {
+		const updatedTripPlan = { ...TripPlan };
+		updatedTripPlan.details[currentDay].visits.push(place);
+		setTripPlan(updatedTripPlan);
 	};
 
 	//debug
@@ -137,7 +144,12 @@ export default function NewPlanBuild(props) {
 									key: "recommendations",
 									label: "Explore",
 									children: (
-										<p>Placeholder for Recommendations</p>
+										<RecommendCard
+											recommendedPlaces={
+												recommendedPlaces
+											}
+											addPlace={addPlace}
+										/>
 									),
 								},
 								{
