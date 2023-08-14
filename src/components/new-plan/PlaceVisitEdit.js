@@ -36,6 +36,7 @@ export default function PlaceVisitEdit({ tripPlan, currentDay }) {
 			),
 		};
 	});
+	daysList[currentDay].disabled = true;
 	const placeData = tripPlan.details[currentDay].visits.map(
 		(placeVisitDetails, i) => ({
 			index: i,
@@ -65,16 +66,17 @@ export default function PlaceVisitEdit({ tripPlan, currentDay }) {
 		},
 	];
 
-	const handleOptionsClick = (placeIndex, clickedOption) => {
+	const handleOptionsClick = (clickedOption, placeIndex) => {
 		switch (clickedOption) {
 			case "show":
 				console.log("Open on map");
 				break;
-			case "move":
-				movePlace(placeIndex, clickedOption);
-				break;
 			case "delete":
 				showDeleteConfirm(placeIndex);
+				break;
+			// clickedOptions would be the day to move to
+			default:
+				movePlace(placeIndex, clickedOption);
 				break;
 		}
 	};
@@ -92,13 +94,12 @@ export default function PlaceVisitEdit({ tripPlan, currentDay }) {
 				tripPlan.details[currentDay].visits.splice(placeIndex, 1);
 				setListRerenderTrigger(!listRerenderTrigger);
 			},
-			onCancel() {},
 		});
 	};
 
 	const movePlace = (placeIndex, selectedDay) => {
 		const moving = tripPlan.details[currentDay].visits[placeIndex];
-		tripPlan.details[parseInt(selectedDay)].visits.push(moving);
+		tripPlan.details[selectedDay].visits.push(moving);
 		tripPlan.details[currentDay].visits.splice(placeIndex, 1);
 		setListRerenderTrigger(!listRerenderTrigger);
 	};
@@ -129,7 +130,9 @@ export default function PlaceVisitEdit({ tripPlan, currentDay }) {
 			<Dropdown
 				menu={{
 					items: optionItems,
-					onClick: (e) => handleOptionsClick(place.index, e.key),
+					onClick: (item) => {
+						handleOptionsClick(item.key, place.index);
+					},
 				}}
 				trigger={["click"]}
 				arrow={{
@@ -182,7 +185,7 @@ export default function PlaceVisitEdit({ tripPlan, currentDay }) {
 						key={place.title}
 						extra={
 							<Image
-								src={place.photo ? place.photo : "error"}
+								src={place.photo ? place.photo : fallbackSrc}
 								width={240}
 								height={160}
 								fallback={fallbackSrc}
