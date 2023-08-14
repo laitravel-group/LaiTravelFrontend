@@ -15,11 +15,13 @@ import ScrollableBox from "../ScrollableBox";
 import TripPlanTabs from "./TripPlanTabs";
 import SearchBox from "./SearchBox";
 import TripPlanView from "../TripPlanView";
-import OptimizePlan from "./OptimizePlan";
+import OptimizePlanModal from "./OptimizePlanModal";
 import { TripPlan } from "../../models/tripPlan";
+import { TripPlanDetailsPerDay } from "../../models/tripPlanDetailsPerDay";
 import { tripPlanJson } from "../../models/testData";
 import apiKey from "../../key";
 import Recommendations from "./Recommendations";
+import { buildTripPlan } from "../../api";
 
 const { Content, Footer, Sider } = Layout;
 const colors = [
@@ -60,7 +62,6 @@ export default function NewPlanBuild(props) {
 	});
 
 	// states
-
 	const [placesSearchResult, setPlacesSearchResult] = useState([]);
 	const [tripPlan, setTripPlan] = useState(
 		//TripPlan.init(city.placeId, city.placeName, dates[0], dates[1])
@@ -70,20 +71,13 @@ export default function NewPlanBuild(props) {
 	const [tripPlanOnCurrentDay, setTripPlanOnCurrentDay] = useState(
 		tripPlan.details[currentDay]
 	);
+	const [proposedPlansOnCurrentDay, setProposedPlansForCurrentDay] =
+		useState();
 	const [previewModalOpen, setPreviewModalOpen] = useState(false);
 	const [optimizeModalOpen, setOptimizeModalOpen] = useState(false);
 	const [optimizeLoading, setOptimizeLoading] = useState(false);
 
 	const { modal } = AntdApp.useApp();
-
-	useEffect(() => {
-		if (mapApiLoaded) {
-			setAutocompleteService(
-				new mapApi.places.AutocompleteService(mapInstance)
-			);
-			setplacesService(new mapApi.places.PlacesService(mapInstance));
-		}
-	}, [mapInstance]);
 
 	const handleCenterChange = () => {
 		if (mapApiLoaded) {
@@ -102,7 +96,30 @@ export default function NewPlanBuild(props) {
 
 	const handleOptimizePlan = () => {
 		setOptimizeLoading(true);
+
+		const desiredPlan = tripPlanOnCurrentDay;
+		buildTripPlan(desiredPlan.toJson())
+			.then((data) => {
+				const newProposedPlans = data.proposed_plans.map((plan) =>
+					TripPlanDetailsPerDay.fromJson(plan)
+				);
+				setProposedPlansForCurrentDay(newProposedPlans);
+				setOptimizeLoading(false);
+				setOptimizeModalOpen(true);
+			})
+			.catch((error) => {
+				console.error("Failed to generate a trip plan:", error);
+			});
 	};
+
+	useEffect(() => {
+		if (mapApiLoaded) {
+			setAutocompleteService(
+				new mapApi.places.AutocompleteService(mapInstance)
+			);
+			setplacesService(new mapApi.places.PlacesService(mapInstance));
+		}
+	}, [mapInstance]);
 
 	useEffect(() => {
 		setTripPlanOnCurrentDay(tripPlan.details[currentDay]);
@@ -226,15 +243,14 @@ export default function NewPlanBuild(props) {
 					>
 						<TripPlanView tripPlan={tripPlan} />
 					</Modal>
-					<Modal
+					<OptimizePlanModal
 						open={optimizeModalOpen}
-						onCancel={() => setOptimizeModalOpen(false)}
-					>
-						<OptimizePlan
-							desiredPlan={tripPlanOnCurrentDay}
-							setTripPlanOnCurrentDay={setTripPlanOnCurrentDay}
-						/>
-					</Modal>
+						setOpen={setOptimizeModalOpen}
+						proposedPlans={proposedPlansOnCurrentDay}
+						tripPlan={tripPlan}
+						setTripPlan={setTripPlan}
+						currentDay={currentDay}
+					/>
 				</Content>
 			</Layout>
 		</Layout>

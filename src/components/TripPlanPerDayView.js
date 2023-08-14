@@ -23,13 +23,15 @@ export default function TripPlanPerDayView({ tripPlanDetailsPerDay }) {
 		<div>
 			<h3>Date: {tripPlanDetailsPerDay.date.format("YYYY-MM-DD")}</h3>
 			<p>
-				Start Location:{" "}
-				{tripPlanDetailsPerDay.startLocation?.placeName ??
-					"Custom Location"}
+				{`Start Location: ${
+					tripPlanDetailsPerDay.startLocation?.placeName ??
+					"Custom Location"
+				}`}
 			</p>
 			<p>
-				Start Time:{" "}
-				{tripPlanDetailsPerDay.startTime?.format("HH:mm") ?? "Unset"}
+				{`Start Time: ${
+					tripPlanDetailsPerDay.startTime?.format("HH:mm") ?? "Unset"
+				}`}
 			</p>
 			<h4>Visits:</h4>
 			<Timeline mode="alternate" items={timelineItems} />
