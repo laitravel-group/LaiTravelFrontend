@@ -72,6 +72,7 @@ export default function NewPlanBuild(props) {
 	);
 	const [previewModalOpen, setPreviewModalOpen] = useState(false);
 	const [optimizeModalOpen, setOptimizeModalOpen] = useState(false);
+	const [optimizeLoading, setOptimizeLoading] = useState(false);
 
 	const { modal } = AntdApp.useApp();
 
@@ -99,7 +100,10 @@ export default function NewPlanBuild(props) {
 		setTripPlan(updatedTripPlan);
 	};
 
-	//debug
+	const handleOptimizePlan = () => {
+		setOptimizeLoading(true);
+	};
+
 	useEffect(() => {
 		setTripPlanOnCurrentDay(tripPlan.details[currentDay]);
 	}, [currentDay]);
@@ -207,9 +211,10 @@ export default function NewPlanBuild(props) {
 							<Button
 								type="primary"
 								style={{ marginRight: "20px" }}
-								onClick={() => setOptimizeModalOpen(true)}
+								onClick={handleOptimizePlan}
+								icon={<CalendarOutlined />}
+								loading={optimizeLoading}
 							>
-								<CalendarOutlined />
 								Optimize Trip Plan
 							</Button>
 						</Col>

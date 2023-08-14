@@ -1,6 +1,7 @@
 import React from "react";
-import { Layout, Timeline, Tabs } from "antd";
+import { Layout, Tabs } from "antd";
 import { CalendarOutlined } from "@ant-design/icons";
+import TripPlanPerDayView from "./TripPlanPerDayView";
 
 export default function TripPlanView({ tripPlan }) {
 	const items = tripPlan.details.map((detail, i) => {
@@ -14,37 +15,8 @@ export default function TripPlanView({ tripPlan }) {
 			),
 		};
 		if (detail.visits.length !== 0) {
-			const timelineItems = detail.visits.map((visit, visitIndex) => {
-				return {
-					children: (
-						<>
-							<h4>
-								{visit.startTime && visit.startTime.isValid()
-									? `${visit.startTime.format(
-											"HH:mm"
-									  )} - ${visit.endTime.format("HH:mm")} `
-									: "Not set yet"}
-							</h4>
-							<p>{visit.place.placeName}</p>
-							<p>{visit.place.description}</p>
-						</>
-					),
-				};
-			});
 			tabs.children = (
-				<div>
-					<h3>Date: {detail.date.format("YYYY-MM-DD")}</h3>
-					<p>
-						Start Location:{" "}
-						{detail.startLocation?.placeName ?? "Custom Location"}
-					</p>
-					<p>
-						Start Time:{" "}
-						{detail.startTime?.format("HH:mm") ?? "Unset"}
-					</p>
-					<h4>Visits:</h4>
-					<Timeline mode="alternate" items={timelineItems} />
-				</div>
+				<TripPlanPerDayView tripPlanDetailsPerDay={detail} />
 			);
 		} else {
 			tabs.children = (
