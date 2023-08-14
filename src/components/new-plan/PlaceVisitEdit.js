@@ -107,19 +107,19 @@ export default function PlaceVisitEdit({ tripPlan, currentDay }) {
 		if (minute === null) {
 			return null;
 		}
-		return tripPlan.startDate.hour(minute / 60).minute(minute % 60);
+		return tripPlan.details[currentDay].date
+			.hour(minute / 60)
+			.minute(minute % 60);
 	};
-	const setStayDuration = (newStayDurationDayjs, placeVisitIndex) => {
-		if (newStayDurationDayjs === null) {
+	const setStayDuration = (stayDuration, placeVisitIndex) => {
+		if (stayDuration === null) {
 			tripPlan.details[currentDay].visits[placeVisitIndex].stayDuration =
 				null;
 			setListRerenderTrigger(!listRerenderTrigger);
 			return;
 		}
-		const newStayDuration =
-			newStayDurationDayjs.hour() * 60 + newStayDurationDayjs.minute();
 		tripPlan.details[currentDay].visits[placeVisitIndex].stayDuration =
-			newStayDuration;
+			stayDuration.hour() * 60 + stayDuration.minute();
 		setListRerenderTrigger(!listRerenderTrigger);
 	};
 
@@ -158,8 +158,8 @@ export default function PlaceVisitEdit({ tripPlan, currentDay }) {
 						tripPlan.details[currentDay].visits[place.index]
 							.stayDuration
 					)}
-					onChange={(e) => {
-						setStayDuration(e, place.index);
+					onChange={(time) => {
+						setStayDuration(time, place.index);
 					}}
 				/>
 			</Space.Compact>
