@@ -18,15 +18,17 @@ export default function PlaceDetailsModal({
 		return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 	};
 
-	const dataSource = place.openingHours ? place.openingHours.map((entry) => {
-		return {
-			key: entry.dayOfWeek,
-			day: capitalize(entry.dayOfWeek),
-			hours: `${entry.openTime.format(
-				"HH:mm"
-			)} - ${entry.closeTime.format("HH:mm")}`,
-		};
-	}) : [];
+	const dataSource = place.openingHours
+		? place.openingHours.map((entry) => {
+				return {
+					key: entry.dayOfWeek,
+					day: capitalize(entry.dayOfWeek),
+					hours: `${entry.openTime.format(
+						"HH:mm"
+					)} - ${entry.closeTime.format("HH:mm")}`,
+				};
+		  })
+		: [];
 
 	const columns = [
 		{
@@ -43,16 +45,15 @@ export default function PlaceDetailsModal({
 
 	return (
 		<Modal
-			width='40%'
-			title={<h2 style={{textAlign: 'center'}}>{place.placeName}</h2>}
+			title={<h2 style={{ textAlign: "center" }}>{place.placeName}</h2>}
 			open={isModalVisible}
 			footer={null}
-			className="centered-modal"
+			className="place-details-modal"
 			onOk={() => setIsModalVisible(false)}
 			onCancel={() => setIsModalVisible(false)}
 		>
-			<img 
-				alt={place.placeName} 
+			<img
+				alt={place.placeName}
 				src={place.photo || fallbackSrc}
 				className="place-details-modal-photo"
 			/>

@@ -1,13 +1,11 @@
-
-.place-details-modal-photo {
-	width: 720px;
-	height: 480px;
-	object-fit: cover;
-}
-
-.place-details-modal-centered-modal {
+.place-details-modal {
 	display: flex !important;
 	align-items: center !important;
 	justify-content: center !important;
 }
 
+.place-details-modal-photo {
+	min-width: 720px;
+	height: 480px;
+	object-fit: cover;
+}

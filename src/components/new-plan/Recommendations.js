@@ -39,7 +39,7 @@ export default function Recommendations({ recommendedPlaces, addPlace }) {
 							}
 							actions={[
 								<Button
-									color = "primary"
+									type="primary"
 									key="addPlace"
 									onClick={(e) => {
 										e.stopPropagation();
@@ -53,7 +53,10 @@ export default function Recommendations({ recommendedPlaces, addPlace }) {
 						>
 							<Meta
 								title={place.placeName}
-								description={place.description || "No description available"}
+								description={
+									place.description ||
+									"No description available"
+								}
 							/>
 						</Card>
 					))}
