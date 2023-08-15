@@ -1,0 +1,13 @@
+
+.place-details-modal-photo {
+	width: 720px;
+	height: 480px;
+	object-fit: cover;
+}
+
+.place-details-modal-centered-modal {
+	display: flex !important;
+	align-items: center !important;
+	justify-content: center !important;
+}
+

@@ -7,4 +7,20 @@
 	width: 240px;
 	height: 160px;
 	object-fit: cover;
+	object-position: center;
 }
+
+/* .ant-card-meta-title {
+	white-space: normal;
+	overflow: visible;
+	height: 30px;
+} */
+
+.ant-card-meta-description {
+    height: 100px;
+    overflow: hidden;
+}
+
+
+
+

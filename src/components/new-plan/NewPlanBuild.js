@@ -89,6 +89,7 @@ export default function NewPlanBuild(props) {
 	};
 
 	const addPlace = (place) => {
+		console.log('Add Place function called with:', place);
 		const updatedTripPlan = { ...TripPlan };
 		updatedTripPlan.details[currentDay].visits.push(place);
 		setTripPlan(updatedTripPlan);
