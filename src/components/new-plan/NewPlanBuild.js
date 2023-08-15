@@ -43,6 +43,7 @@ const colors = [
 
 export default function NewPlanBuild(props) {
 	const { dates, city, recommendedPlaces } = props;
+	const { message } = AntdApp.useApp();
 
 	// google map api
 	const [mapInstance, setMapInstance] = useState(null);
@@ -90,7 +91,11 @@ export default function NewPlanBuild(props) {
 	};
 
 	const addPlace = (place) => {
-		console.log("Add Place function called with:", place);
+		message.success(
+			`Successfully added ${place.placeName} to ${dates[0]
+				.add(currentDay, "day")
+				.format("MMM DD")}`
+		);
 		const updatedTripPlan = { ...tripPlan };
 		updatedTripPlan.details[currentDay].visits.push(
 			PlaceVisitDetails.init(place)
