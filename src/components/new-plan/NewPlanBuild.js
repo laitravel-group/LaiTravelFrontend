@@ -18,6 +18,7 @@ import TripPlanView from "../TripPlanView";
 import OptimizePlanModal from "./OptimizePlanModal";
 import { TripPlan } from "../../models/tripPlan";
 import { TripPlanDetailsPerDay } from "../../models/tripPlanDetailsPerDay";
+import { PlaceVisitDetails } from "../../models/placeVisitDetails";
 import { tripPlanJson } from "../../models/testData";
 import apiKey from "../../key";
 import Recommendations from "./Recommendations";
@@ -89,9 +90,11 @@ export default function NewPlanBuild(props) {
 	};
 
 	const addPlace = (place) => {
-		console.log('Add Place function called with:', place);
-		const updatedTripPlan = { ...TripPlan };
-		updatedTripPlan.details[currentDay].visits.push(place);
+		console.log("Add Place function called with:", place);
+		const updatedTripPlan = { ...tripPlan };
+		updatedTripPlan.details[currentDay].visits.push(
+			PlaceVisitDetails.init(place)
+		);
 		setTripPlan(updatedTripPlan);
 	};
 
@@ -110,6 +113,7 @@ export default function NewPlanBuild(props) {
 			})
 			.catch((error) => {
 				console.error("Failed to generate a trip plan:", error);
+				setOptimizeLoading(false);
 			});
 	};
 
@@ -182,6 +186,7 @@ export default function NewPlanBuild(props) {
 											currentDay={currentDay}
 											setCurrentDay={setCurrentDay}
 											tripPlan={tripPlan}
+											setTripPlan={setTripPlan}
 										/>
 									),
 								},

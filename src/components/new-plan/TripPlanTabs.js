@@ -8,6 +8,7 @@ export default function TripPlanTabs({
 	currentDay,
 	setCurrentDay,
 	tripPlan,
+	setTripPlan,
 }) {
 	const numDays = dates[1].diff(dates[0], "day") + 1;
 	const items = new Array(numDays).fill(null).map((_, i) => {
@@ -20,7 +21,11 @@ export default function TripPlanTabs({
 			),
 			key: i,
 			children: (
-				<PlaceVisitEdit tripPlan={tripPlan} currentDay={currentDay} />
+				<PlaceVisitEdit
+					tripPlan={tripPlan}
+					setTripPlan={setTripPlan}
+					currentDay={currentDay}
+				/>
 			),
 		};
 	});

@@ -10,6 +10,16 @@ export class PlaceVisitDetails {
 		this.stayDuration = stayDuration;
 	}
 
+	static init(place) {
+		return new PlaceVisitDetails(
+			place,
+			undefined,
+			undefined,
+			undefined,
+			undefined
+		);
+	}
+
 	// backend api conversion
 	static fromJson(jsonObject) {
 		return new PlaceVisitDetails(
@@ -22,8 +32,8 @@ export class PlaceVisitDetails {
 	}
 
 	toJson() {
-		const startTimeStr = this.startTime.format("HH:mm");
-		const endTimeStr = this.endTime.format("HH:mm");
+		const startTimeStr = this.startTime?.format("HH:mm");
+		const endTimeStr = this.endTime?.format("HH:mm");
 		return {
 			place: this.place.toJson(),
 			travel_time: this.travelTime,
