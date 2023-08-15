@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Card, Button, Row, Col, Space } from "antd";
+import { Card, Button, Tooltip, Space } from "antd";
 import { Scrollbars } from "rc-scrollbars";
 import PlaceDetailsModal from "./PlaceDetailsModal";
 
@@ -52,7 +52,11 @@ export default function Recommendations({ recommendedPlaces, addPlace }) {
 							className="recommendation-card"
 						>
 							<Meta
-								title={place.placeName}
+								title={
+									<Tooltip title={place.placeName}>
+										<span>{place.placeName}</span>
+									</Tooltip>
+								}
 								description={place.description || "No description available"}
 							/>
 						</Card>
@@ -70,3 +74,6 @@ export default function Recommendations({ recommendedPlaces, addPlace }) {
 		</div>
 	);
 }
+
+
+
